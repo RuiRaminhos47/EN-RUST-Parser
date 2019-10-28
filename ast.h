@@ -7,7 +7,8 @@
 struct _Expr {
   enum { 
     E_INTEGER,
-    E_OPERATION
+    E_OPERATION,
+    E_VARIABLE
   } kind;
   union {
     int value; // for integer values
@@ -16,6 +17,7 @@ struct _Expr {
       struct _Expr* left;
       struct _Expr* right;
     } op; // for binary expressions
+    char* var;
   } attr;
 };
 
@@ -99,6 +101,7 @@ typedef struct _Cmd Cmd;
 // Constructor functions (see implementation in ast.c)
 Expr* ast_integer(int v);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
+Expr* ast_var(char* var);
 BoolExpr* expression_integer(int v);
 BoolExpr* expression_operation(int operator, Expr* left, Expr* right);
 Cmd* command_construct1(int command, BoolExpr* condition, commandList* commandList); // IF

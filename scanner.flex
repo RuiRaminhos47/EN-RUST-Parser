@@ -18,6 +18,10 @@ int yyline = 1;
    yylval.intValue = atoi(yytext);
    return INT; 
 }
+[a-z][A-Za-z]* { 
+	yylval.charValue = yytext;	
+	return VAR; 
+}
 "+" { return PLUS; }
 "-" { return MINUS; }
 "*" { return TIMES; }
@@ -37,10 +41,9 @@ int yyline = 1;
 "{" { return COMBEG; }
 "}" { return COMEND; }
 "println!" { return PRINTL; }
-""" { return ASPA; }
+\".*\" { return STRING; }
 "read_line" { return READL; }
 .  { yyerror("unexpected character"); }
 %%
 
-// (while, if, then, else, = , ; , { , }).
 

@@ -113,8 +113,11 @@ DONE
 
 d) In parser.bison change the grammar by:
 -- adding grammar rules for commands.
+DONE
 -- define new type rules for commands.
+DONE
 -- define the root variable as a command.
+DONE
 
 e) In printAbsTree.c : define a function printCmd(Cmd* command) which prints the abstract syntax tree stored in the structure pointed by command.
 

@@ -20,6 +20,13 @@ Expr* ast_operation
   return node;
 }
 
+Expr* ast_var(char* var) {
+  Expr* node = (Expr*) malloc(sizeof(Expr));
+  node->kind = E_VARIABLE;
+  node->attr.var = var;
+  return node;
+}
+
 BoolExpr* expression_integer(int v) {
   BoolExpr* expression = (BoolExpr*) malloc(sizeof(BoolExpr));
   expression->kind = EB_CONSTANT;
