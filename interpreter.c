@@ -48,9 +48,6 @@ int main(int argc, char** argv) {
       //printf("Result = %d\n", eval(root));
       printf("\n");
 
-      // printa a arvore
-      //printExpr(root);
-
       printCmdList(root);
       printf("\n");
   }

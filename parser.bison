@@ -24,6 +24,7 @@
   ENDING
   COMEND
   MAIN
+  EQUALAR
 
 // Operator associativity & precedence
 %left PLUS MINUS
@@ -148,8 +149,8 @@ cmd:
     $$ = command_construct4(PRINT, $2);
   }
   |
-  LET VAR expr ENDING {
-    $$ = command_construct5(ATRIB, $2, $3);
+  LET VAR EQUALAR expr ENDING {
+    $$ = command_construct5(ATRIB, $2, $4);
   }
   |
   READL STRING ENDING {

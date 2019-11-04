@@ -33,17 +33,20 @@ int yyline = 1;
 "<" { return LT; }
 ">=" { return GET; }
 "<=" { return LETH; }
-"if" { return IF; }
-"else" { return ELSE; }
-"while" { return WHILE; }
-"=" { return LET; }
+"=" { return EQUALAR; }
+"LET" { return LET; }
 ";" { return ENDING; }
 "{" { return COMBEG; }
 "}" { return COMEND; }
-"println!" { return PRINTL; }
+"PRINTLN" { return PRINTL; }
+"IF" { return IF; }
+"ELSE" { return ELSE; }
+"WHILE" { return WHILE; }
+"MAIN" { return MAIN; }
 \".*\" { return STRING; }
-"read_line" { return READL; }
+"READ_LINE" { return READL; }
 .  { yyerror("unexpected character"); }
+
 %%
 
 
