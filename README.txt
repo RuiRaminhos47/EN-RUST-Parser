@@ -121,9 +121,10 @@ DONE
 
 e) In printAbsTree.c : define a function printCmd(Cmd* command) which prints the abstract syntax tree stored in the structure pointed by command.
 
+DONE
+
 f) Change the main function to print commands.
 
-
-
+DONE
 
 

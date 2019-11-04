@@ -40,20 +40,14 @@ struct _BoolExpr {
 
 typedef struct _BoolExpr BoolExpr;
 
-struct commandList {
-  Cmd* elem;
-  struct commandList *next;
-};
-
-typedef struct _commandList commandList;
-
 struct _Cmd {
   enum { 
     CONDITIONAL,
+    CONDITIONAL2,
     LOOP,
-    PRINTL,
-    LET,
-    READL
+    PRINT,
+    ATRIB,
+    READ
   } kind;
   union {
 
@@ -96,7 +90,14 @@ struct _Cmd {
 
 };
 
-typedef struct _Cmd Cmd; 
+typedef struct _Cmd Cmd; // podemos chamar struct _Cmd ou Cmd
+
+struct _commandList {
+  Cmd* elem;
+  struct _commandList *next;
+};
+
+typedef struct _commandList commandList;
 
 // Constructor functions (see implementation in ast.c)
 Expr* ast_integer(int v);
@@ -110,5 +111,6 @@ Cmd* command_construct3(int command, BoolExpr* condition, commandList* commandLi
 Cmd* command_construct4(int command, char* string); // PRINTL
 Cmd* command_construct5(int command, char* var, Expr* expression); // LET
 Cmd* command_construct6(int command, char* var); // READL
+commandList* cmdLisT_construct(Cmd* elem, commandList* resto);
 
 #endif

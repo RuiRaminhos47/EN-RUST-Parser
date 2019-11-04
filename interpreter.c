@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "parser.h"
+#include "printAbsTree.h"
 
 int eval(Expr* expr) {
   int result = 0;
@@ -33,6 +34,7 @@ int eval(Expr* expr) {
   }
   return result;
 }
+
 int main(int argc, char** argv) {
   --argc; ++argv;
   if (argc != 0) {
@@ -43,10 +45,13 @@ int main(int argc, char** argv) {
     }
   } //  yyin = stdin
   if (yyparse() == 0) {
-      printf("Result = %d\n", eval(root));
+      //printf("Result = %d\n", eval(root));
       printf("\n");
+
       // printa a arvore
-      printExpr(root);
+      //printExpr(root);
+
+      printCmdList(root);
       printf("\n");
   }
 

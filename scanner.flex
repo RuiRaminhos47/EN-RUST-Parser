@@ -27,7 +27,7 @@ int yyline = 1;
 "*" { return TIMES; }
 "/" { return DIV; }
 "%" { return REST; }
-"==" { return EQUAL; }
+"==" { return EQUALTO; }
 "!=" { return NEQUALTO; }
 ">" { return GT; }
 "<" { return LT; }

@@ -21,7 +21,9 @@
   STRING
   VAR
   COMBEG
+  ENDING
   COMEND
+  MAIN
 
 // Operator associativity & precedence
 %left PLUS MINUS
@@ -37,12 +39,13 @@
   char* charValue;
   Expr* exprValue; 
   BoolExpr* exprBool;
-  Cmd* cmdD;
+  Cmd* cmdd;
   commandList* cmdl;
 }
 
 %type <intValue> INT
 %type <charValue> VAR
+%type <charValue> STRING
 %type <exprValue> expr
 %type <exprBool> boolexpr
 %type <cmdd> cmd
@@ -118,13 +121,23 @@ boolexpr:
   } 
   ;
 
+commandlist:
+  cmd {
+    $$ = cmdLisT_construct($1, NULL);
+  }
+  |
+  cmd commandlist {
+    $$ = cmdLisT_construct($1, $2);
+  }
+  ;
+
 cmd:
   IF boolexpr COMBEG commandlist COMEND {
     $$ = command_construct1(IF, $2, $4);
   }
   |
   IF boolexpr COMBEG commandlist COMEND ELSE COMBEG commandlist COMEND {
-    $$ = command_construct2(IF, $2, $4, ELSE, $8);
+    $$ = command_construct2(IF, $2, $4, $8);
   }
   |
   WHILE boolexpr COMBEG commandlist COMEND {
@@ -132,15 +145,15 @@ cmd:
   }
   |
   PRINTL STRING ENDING {
-    $$ = command_construct4(PRINTL, $2);
+    $$ = command_construct4(PRINT, $2);
   }
   |
   LET VAR expr ENDING {
-    $$ = command_construct5(IF, VAR, $3);
+    $$ = command_construct5(ATRIB, $2, $3);
   }
   |
   READL STRING ENDING {
-    $$ = command_construct6(READL, VAR);
+    $$ = command_construct6(READ, $2);
   }
   ;
 %%

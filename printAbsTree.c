@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "ast.h" // AST header
 #include "parser.h"
+#include "printAbsTree.h"
 
 void printExpr(Expr* exp) {
 	if(exp->kind==E_INTEGER) printf("%d ", exp->attr.value);
@@ -21,7 +22,7 @@ void printExpr(Expr* exp) {
 				printf("\n / \n");
 				break;
 			case REST:
-				printf("\n % \n");
+				printf("\n %% \n");
 				break;
 			default: yyerror("Unknown operator!");
 		}
@@ -56,4 +57,53 @@ void printBool(BoolExpr* b) {
 		}
 		printExpr(b->attr.op.bright);
 	}
+}
+
+void printCmd(Cmd* command) {
+	switch(command->kind) {
+		case CONDITIONAL:
+			printf("IF ");
+			printBool(command->attr.it.condition);
+			printCmdList(command->attr.it.list);
+			break;
+
+		case CONDITIONAL2:
+			printf("IF ");
+			printBool(command->attr.ite.condition);
+			printCmdList(command->attr.ite.list1);
+			printf("ELSE ");
+			printCmdList(command->attr.ite.list2);
+			break;
+
+		case LOOP:
+			printf("WHILE ");
+			printBool(command->attr.w.condition);
+			printCmdList(command->attr.w.list);
+			break;
+
+		case PRINTL:
+			printf("PRINTL ");
+			printf("%s\n", command->attr.p.string);
+			break;	
+
+		case LET:
+			printf("LET ");
+			printf("%s ", command->attr.l.var);
+			printf("= ");
+			printExpr(command->attr.l.expression);
+			break;
+
+		case READL:
+			printf("READL ");
+			printf("%s\n", command->attr.r.var);
+			break;
+
+		default:
+			break;
+	}
+}
+
+void printCmdList(commandList* x) {
+	printCmd(x->elem);
+	printCmdList(x->next);
 }
