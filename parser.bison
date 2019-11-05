@@ -23,7 +23,6 @@
   COMBEG
   ENDING
   COMEND
-  MAIN
   EQUALAR
 
 // Operator associativity & precedence
@@ -68,11 +67,15 @@ commandList* root;
 }
 
 %%
-program: MAIN COMBEG commandlist COMEND { root = $3; }
+program: commandlist { root = $1; }
 
 expr: 
   INT { 
     $$ = ast_integer($1); 
+  }
+  |
+  VAR {
+    $$ =  ast_var($1);
   }
   | 
   expr PLUS expr { 

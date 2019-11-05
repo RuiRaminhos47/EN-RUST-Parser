@@ -1,1 +1,1 @@
-MAIN { READ_LINE "ola" ; }
+READ_LINE "ola" ;

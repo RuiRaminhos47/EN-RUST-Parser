@@ -42,7 +42,6 @@ int yyline = 1;
 "IF" { return IF; }
 "ELSE" { return ELSE; }
 "WHILE" { return WHILE; }
-"MAIN" { return MAIN; }
 \".*\" { return STRING; }
 "READ_LINE" { return READL; }
 .  { yyerror("unexpected character"); }

@@ -76,7 +76,7 @@ struct _Cmd {
     } p;
 
     struct {
-      int operator; // LET
+      int operator; // ATRIB
       char* var;
       struct _Expr* expression;
     } l;
