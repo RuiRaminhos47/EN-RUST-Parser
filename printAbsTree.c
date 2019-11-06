@@ -60,6 +60,7 @@ void printBool(BoolExpr* b) {
 }
 
 void printCmd(Cmd* command) {
+	printf("TESTE5");
 	switch(command->kind) {
 		case CONDITIONAL:
 			printf("IF ");
@@ -104,6 +105,7 @@ void printCmd(Cmd* command) {
 }
 
 void printCmdList(commandList* x) {
+	// printf("TESTE4"); NÃO CHEGA AQUI, O ERRO É A CHAMAR O ROOT
 	printCmd(x->elem);
 	printCmdList(x->next);
 }

@@ -46,9 +46,9 @@ int main(int argc, char** argv) {
   } //  yyin = stdin
   if (yyparse() == 0) {
       //printf("Result = %d\n", eval(root));
-      printf("\n");
+      //printf("TESTE3\n"); // com \n printa, sem ele n printa
 
-      printCmdList(root);
+      printCmdList(root); // a falha acontece aqui
       printf("\n");
   }
 

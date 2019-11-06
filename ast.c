@@ -2,6 +2,7 @@
 
 #include <stdlib.h> // for malloc
 #include "ast.h" // AST header
+#include <stdio.h>
 
 Expr* ast_integer(int v) {
   Expr* node = (Expr*) malloc(sizeof(Expr));
@@ -44,9 +45,11 @@ BoolExpr* expression_operation(int operator, Expr* left, Expr* right) {
 }
 
 commandList* cmdLisT_construct(Cmd* elem, commandList* resto) {
+  // OK 2
   commandList* lista = (commandList*) malloc(sizeof(commandList));
   lista->elem = elem;
   lista->next = resto;
+  // OK 3
   return lista;
 }
 
@@ -96,6 +99,7 @@ Cmd* command_construct5(int command, char* var, Expr* expression) {
 }
 
 Cmd* command_construct6(int command, char* var) {
+  // OK 1 
   Cmd* commando = (Cmd*) malloc(sizeof(Cmd));
   commando->kind = READ;
   commando->attr.r.operator = command;
