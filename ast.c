@@ -45,11 +45,9 @@ BoolExpr* expression_operation(int operator, Expr* left, Expr* right) {
 }
 
 commandList* cmdLisT_construct(Cmd* elem, commandList* resto) {
-  // OK 2
   commandList* lista = (commandList*) malloc(sizeof(commandList));
   lista->elem = elem;
   lista->next = resto;
-  // OK 3
   return lista;
 }
 
@@ -99,10 +97,18 @@ Cmd* command_construct5(int command, char* var, Expr* expression) {
 }
 
 Cmd* command_construct6(int command, char* var) {
-  // OK 1 
   Cmd* commando = (Cmd*) malloc(sizeof(Cmd));
   commando->kind = READ;
   commando->attr.r.operator = command;
   commando->attr.r.var = var;
+  return commando;
+}
+
+Cmd* command_construct7(int command, char* string, char* var) {
+  Cmd* commando = (Cmd*) malloc(sizeof(Cmd));
+  commando->kind = PRINT2;
+  commando->attr.p2.operator = command;
+  commando->attr.p2.string = string;
+  commando->attr.p2.var = var;
   return commando;
 }

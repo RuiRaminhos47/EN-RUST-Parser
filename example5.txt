@@ -1,1 +1,7 @@
-READ_LINE "ola" ;
+fn main() {
+	let x=4;
+	println!("ola");
+	while 2>3 { read_line(&boas); }
+	if 4>4 { println!("ola"); }
+	if 3<4 { let x=4; } else { println!("boa"); }
+}

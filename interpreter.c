@@ -37,6 +37,7 @@ int eval(Expr* expr) {
 
 int main(int argc, char** argv) {
   --argc; ++argv;
+  
   if (argc != 0) {
     yyin = fopen(*argv, "r");
     if (!yyin) {
@@ -44,12 +45,10 @@ int main(int argc, char** argv) {
       return 1;
     }
   } //  yyin = stdin
+  
   if (yyparse() == 0) {
       //printf("Result = %d\n", eval(root));
-      //printf("TESTE3\n"); // com \n printa, sem ele n printa
-
       printCmdList(root); // a falha acontece aqui
-      printf("\n");
   }
 
   return 0;

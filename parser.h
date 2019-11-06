@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 56 "parser.bison" /* yacc.c:1909  */
+#line 62 "parser.bison" /* yacc.c:1909  */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -83,7 +83,13 @@ commandList* root;
     COMBEG = 278,
     ENDING = 279,
     COMEND = 280,
-    EQUALAR = 281
+    EQUALAR = 281,
+    PARIN = 282,
+    PAROUT = 283,
+    ECOM = 284,
+    FN = 285,
+    MAIN = 286,
+    VIRG = 287
   };
 #endif
 
@@ -92,7 +98,7 @@ commandList* root;
 
 union YYSTYPE
 {
-#line 37 "parser.bison" /* yacc.c:1909  */
+#line 43 "parser.bison" /* yacc.c:1909  */
 
   int intValue;
   char* charValue;
@@ -101,7 +107,7 @@ union YYSTYPE
   Cmd* cmdd;
   commandList* cmdl;
 
-#line 105 "parser.h" /* yacc.c:1909  */
+#line 111 "parser.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

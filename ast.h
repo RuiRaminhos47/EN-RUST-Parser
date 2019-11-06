@@ -47,7 +47,8 @@ struct _Cmd {
     LOOP,
     PRINT,
     ATRIB,
-    READ
+    READ,
+    PRINT2
   } kind;
   union {
 
@@ -71,7 +72,7 @@ struct _Cmd {
     } w;
 
     struct {
-      int operator; // PRINTL
+      int operator; // PRINT
       char* string;
     } p;
 
@@ -82,9 +83,15 @@ struct _Cmd {
     } l;
 
     struct {
-      int operator; // READL
+      int operator; // READ
       char* var;
     } r;
+
+    struct {
+      int operator; // PRINT2
+      char* string;
+      char* var;
+    } p2;
 
   } attr;
 
@@ -108,9 +115,10 @@ BoolExpr* expression_operation(int operator, Expr* left, Expr* right);
 Cmd* command_construct1(int command, BoolExpr* condition, commandList* commandList); // IF
 Cmd* command_construct2(int command, BoolExpr* condition, commandList* commandList1, commandList* commandList2); // IF THEN ELSE
 Cmd* command_construct3(int command, BoolExpr* condition, commandList* commandList); // WHILE
-Cmd* command_construct4(int command, char* string); // PRINTL
-Cmd* command_construct5(int command, char* var, Expr* expression); // LET
-Cmd* command_construct6(int command, char* var); // READL
+Cmd* command_construct4(int command, char* string); // PRINT
+Cmd* command_construct5(int command, char* var, Expr* expression); // ATRIB
+Cmd* command_construct6(int command, char* var); // READ
+Cmd* command_construct7(int command, char* string, char* var);
 commandList* cmdLisT_construct(Cmd* elem, commandList* resto);
 
 #endif

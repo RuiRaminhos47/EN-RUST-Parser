@@ -14,14 +14,6 @@ int yyline = 1;
 #.*\n { yyline++; }
 \n { yyline++; }
 
-\-?[0-9]+ { 
-   yylval.intValue = atoi(yytext);
-   return INT; 
-}
-[a-z][A-Za-z]* { 
-	yylval.charValue = yytext;	
-	return VAR; 
-}
 "+" { return PLUS; }
 "-" { return MINUS; }
 "*" { return TIMES; }
@@ -34,16 +26,33 @@ int yyline = 1;
 ">=" { return GET; }
 "<=" { return LETH; }
 "=" { return EQUALAR; }
-"LET" { return LET; }
+"let" { return LET; }
 ";" { return ENDING; }
+"&" { return ECOM; }
+"(" { return PARIN; }
+")" { return PAROUT; }
 "{" { return COMBEG; }
 "}" { return COMEND; }
-"PRINTLN" { return PRINTL; }
-"IF" { return IF; }
-"ELSE" { return ELSE; }
-"WHILE" { return WHILE; }
-\".*\" { return STRING; }
-"READ_LINE" { return READL; }
+"," { return VIRG; }
+"println!" { return PRINTL; }
+"if" { return IF; }
+"else" { return ELSE; }
+"while" { return WHILE; }
+"read_line" { return READL; }
+"fn" { return FN; }
+"main" { return MAIN; }
+\-?[0-9]+ { 
+   yylval.intValue = atoi(yytext);
+   return INT; 
+}
+[a-z][A-Za-z]* { 
+	yylval.charValue = strdup(yytext);	
+	return VAR; 
+}
+\".*\" { 
+	yylval.charValue = strdup(yytext);	
+	return STRING; 
+}
 .  { yyerror("unexpected character"); }
 
 %%

@@ -24,6 +24,12 @@
   ENDING
   COMEND
   EQUALAR
+  PARIN
+  PAROUT
+  ECOM
+  FN
+  MAIN
+  VIRG
 
 // Operator associativity & precedence
 %left PLUS MINUS
@@ -67,7 +73,7 @@ commandList* root;
 }
 
 %%
-program: commandlist { root = $1; }
+program: FN MAIN PARIN PAROUT COMBEG commandlist COMEND { root = $6; }
 
 expr: 
   INT { 
@@ -126,8 +132,8 @@ boolexpr:
   ;
 
 commandlist:
-  cmd {
-    $$ = cmdLisT_construct($1, NULL);
+  {
+    $$ = NULL;
   }
   |
   cmd commandlist {
@@ -148,16 +154,20 @@ cmd:
     $$ = command_construct3(WHILE, $2, $4);
   }
   |
-  PRINTL STRING ENDING {
-    $$ = command_construct4(PRINT, $2);
+  PRINTL PARIN STRING PAROUT ENDING {
+    $$ = command_construct4(PRINT, $3);
   }
   |
   LET VAR EQUALAR expr ENDING {
     $$ = command_construct5(ATRIB, $2, $4);
   }
   |
-  READL STRING ENDING {
-    $$ = command_construct6(READ, $2);
+  READL PARIN ECOM VAR PAROUT ENDING {
+    $$ = command_construct6(READ, $4);
+  }
+  |
+  PRINTL PARIN STRING VIRG VAR PAROUT ENDING {
+    $$ = command_construct7(PRINT2, $3, $5);
   }
   ;
 %%
