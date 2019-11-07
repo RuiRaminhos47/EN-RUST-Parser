@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
   
   if (yyparse() == 0) {
       //printf("Result = %d\n", eval(root));
-      printCmdList(root); // a falha acontece aqui
+      printCmdList(root, 0);
   }
 
   return 0;

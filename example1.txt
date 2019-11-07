@@ -1,2 +1,8 @@
-# Just a simple integer.
-1234567890
+fn main() {
+	let x=4;
+	println!("teste");
+	while 2/1>2 { read_line(&teste); }
+	if 4*1>4 { println!("teste3"); }
+	if 3+2<4 { let x=4; } else { println!("teste4"); }
+	println!("teste5", x);
+}
