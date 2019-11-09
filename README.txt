@@ -30,9 +30,7 @@ of single integers or expressions making use
 of the '+' operator.  
 
 Execute it for example1.txt and example2.txt, for instance 
-type "./interpreter example1.txt". 
-
-DONE 
+type "./interpreter example1.txt".  
 
 ============================================================
 2. Handle binary operators '-', '*', '/', '%'.
@@ -49,17 +47,9 @@ c) Modify the 'eval' function in 'interpreter.c'.
 d) Test with examples that make use of the new
 operators, for instance the available 'example3.txt'.
 
-DONE
-
 e) Define a new file printAbsTree.c and define there a C function printExpr(Expr* exp) which prints the abstract syntax tree stored in the Expr C structure exp.
 
-DONE
-
 f) Change the main function to print the abstract syntax tree.
-
-DONE
-
-
 
 ============================================================
 3. Relational operators  
@@ -75,21 +65,13 @@ a) In ast.h: define the BoolExpr datatype and the declare the corresponding bool
 
 b) In asa.c: implement the new constructor functions.
 
-DONE
-
 c) In scanner.flex add the new boolean operators.
-
-DONE
 
 d) In parser.bison change the grammar by:
 -- adding grammar rules for boolean expressions.
 -- define new type rules for boolean expressions.
 
-DONE
-
 e) In printAbsTree.c : define a function printBool(BoolExpr* b) which prints the abstract syntax tree stored in b.
-
-DONE
 
 ============================================================
 
@@ -101,30 +83,17 @@ The following steps are suggested:
 
 a) In ast.h: define the Cmd datatype and the declare the corresponding command constructors.
 
-DONE
-
 b) In asa.c: implement the new constructor functions.
-
-DONE
 
 c) In scanner.flex add the new tokens belonging to the language of commands (while, if, then, else, = , ; , { , }).
 
-DONE
-
 d) In parser.bison change the grammar by:
 -- adding grammar rules for commands.
-DONE
 -- define new type rules for commands.
-DONE
 -- define the root variable as a command.
-DONE
 
 e) In printAbsTree.c : define a function printCmd(Cmd* command) which prints the abstract syntax tree stored in the structure pointed by command.
 
-DONE
-
 f) Change the main function to print commands.
-
-DONE
 
 
