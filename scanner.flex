@@ -34,6 +34,8 @@ int yyline = 1;
 "{" { return COMBEG; }
 "}" { return COMEND; }
 "," { return VIRG; }
+"true" { return TRUE; }
+"false" { return FALSE; }
 "println!" { return PRINTL; }
 "if" { return IF; }
 "else" { return ELSE; }

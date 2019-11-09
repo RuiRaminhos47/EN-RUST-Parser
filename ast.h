@@ -26,10 +26,12 @@ typedef struct _Expr Expr; // Convenience typedef
 struct _BoolExpr {
   enum { 
     EB_CONSTANT,
+    EB_CONSTANTS,
     EB_OPERATION
   } kind;
   union {
     int bvalue; // for integer values
+    int operator; // TRUE AND FALSE
     struct { 
       int operator; // EQUALTO, NEQUALTO, GT, LT, GET, LETH  
       struct _Expr* bleft;
@@ -111,6 +113,7 @@ Expr* ast_integer(int v);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
 Expr* ast_var(char* var);
 BoolExpr* expression_integer(int v);
+BoolExpr* expression_string(int operator);
 BoolExpr* expression_operation(int operator, Expr* left, Expr* right);
 Cmd* command_construct1(int command, BoolExpr* condition, commandList* commandList); // IF
 Cmd* command_construct2(int command, BoolExpr* condition, commandList* commandList1, commandList* commandList2); // IF THEN ELSE

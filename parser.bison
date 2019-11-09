@@ -30,6 +30,8 @@
   FN
   MAIN
   VIRG
+  TRUE
+  FALSE
 
 // Operator associativity & precedence
 %left PLUS MINUS
@@ -52,6 +54,8 @@
 %type <intValue> INT
 %type <charValue> VAR
 %type <charValue> STRING
+%type <charValue> TRUE
+%type <charValue> FALSE
 %type <exprValue> expr
 %type <exprBool> boolexpr
 %type <cmdd> cmd
@@ -128,7 +132,15 @@ boolexpr:
   |
   expr LETH expr { 
     $$ = expression_operation(LETH, $1, $3); 
-  } 
+  }
+  |
+  TRUE {
+    $$ = expression_string(TRUE);
+  }
+  |
+  FALSE {
+    $$ = expression_string(FALSE);
+  }
   ;
 
 commandlist:

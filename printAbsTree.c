@@ -45,6 +45,17 @@ void printBool(BoolExpr* b, int profundidade) {
 	fazArvore(profundidade);
 
 	if(b->kind==EB_CONSTANT) printf("%d\n", b->attr.bvalue);
+	if(b->kind==EB_CONSTANTS) {
+		switch(b->attr.operator) {
+			case TRUE:
+				printf("true\n");
+				break;
+			case FALSE:
+				printf("false\n");
+				break;
+			default: yyerror("Unknown bool!");
+		}
+	}
 	if(b->kind==EB_OPERATION) {
 		switch(b->attr.op.operator) {
 			case EQUALTO:

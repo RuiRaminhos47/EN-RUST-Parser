@@ -35,6 +35,13 @@ BoolExpr* expression_integer(int v) {
   return expression;
 }
 
+BoolExpr* expression_string(int operator) {
+  BoolExpr* expression = (BoolExpr*) malloc(sizeof(BoolExpr));
+  expression->kind = EB_CONSTANTS;
+  expression->attr.operator = operator;
+  return expression;
+}
+
 BoolExpr* expression_operation(int operator, Expr* left, Expr* right) {
   BoolExpr* expression = (BoolExpr*) malloc(sizeof(BoolExpr));
   expression->kind = EB_OPERATION;
