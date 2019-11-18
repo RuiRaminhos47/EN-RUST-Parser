@@ -1,99 +1,102 @@
 ============================================================
-Abstract syntax trees (ASTs)
+Geração de código
 ============================================================
 
-Summary: we will work on building ASTs for a language of 
-arithmetic expressions involving integers.
-
-We will start with "programs" defined by a single expression
-made of numbers and sum (+) operations.  
-
-After parsing, the AST for a program is visited/interpreted 
-to print values for expressions.
+O objectivo desta aula é implementar um gerador de código para expressões aritméticas.
+O input é uma estrutura Expr do primeiro trabalho prático, adaptado de forma a lidar só com expressões aritméticas ( a variável root será de tipo Expr)
 
 ============================================================
-1. Get started: 
+1. Baseado no primeiro trabalho crie um novo projeto para construir a árvore abstracta só de expressões aritméticas sem variáveis.
 
-a) Check the available files:
-   - Makefile : makefile to build the interpreter.
-   - scanner.flex : the lexical analyser (scanner) in flex
-   - parser.bison: the parser in bison
-   - ast.h, ast.c: AST declarations & constructor implementations
-   - interpreter.c: the interpreter routines including main
-   - example[1234].txt : example files
+DONE
+============================================================
+2. 
 
-b) Compile the interpreter by typing "make" in the command line.
-   The generated executable file is called "interpreter".
+a) Defina ficheiros code.h e code.c para implementar uma estrutura (struct Instr) e respectivos construtores de um código intermédio de três endereços definido por: 
 
-c)  The interpreter recognises a single expression composed 
-of single integers or expressions making use
-of the '+' operator.  
+instruction -> VAR := atom | VAR := atom binop atom 
 
-Execute it for example1.txt and example2.txt, for instance 
-type "./interpreter example1.txt".  
+atom -> VAR
+atom -> NUMBER
+
+binop -> PLUS | MINUS | DIV | MULT
+
+DONE
+
+b) Defina uma estrutura para listas de instruções, InstrList (lista de apontadores para structs _Instr), respectivos construtores e funções de acesso getFirst e nextInstrs, e uma função append para concatenação de listas de instruções.
+
+DONE
+
+c) Defina uma função printInstr para imprimir uma instrução.
+
+DONE
+
+d) Defina uma função printListIntrs para imprimir uma lista de instruções.
+
+DONE
+
+
 
 ============================================================
-2. Handle binary operators '-', '*', '/', '%'.
-You'll need to:
+3. Defina em C um compilador da árvore abstracta para expressões (struct _Expr) para uma lista de instruções (lista de struct _Instr).
 
-a) Modify the parser / scanner by defining / recognising 
-a new tokens for each operator, and also operator 
-associativity and precedence.
+Uma sugestão de protótipo para a função que compila expressões é:
 
-b) Add new rules to the grammar for 'expr'.
+InstrList compileExp(Expr e, char *r); onde r é o registo onde está o valor da availação da expressão na lista de instruções InstrList. Por exemplo:
 
-c) Modify the 'eval' function in 'interpreter.c'.
+O resultado da compilação da expressão: x - 2*5 é a lista de instruções:
 
-d) Test with examples that make use of the new
-operators, for instance the available 'example3.txt'.
+t1 := x;
+t2 := 2;
+t3 := 5;
+t4 := t1*t2;
+t5 := t1 - t4;
 
-e) Define a new file printAbsTree.c and define there a C function printExpr(Expr* exp) which prints the abstract syntax tree stored in the Expr C structure exp.
+e neste caso o registo r é igual a t5.
 
-f) Change the main function to print the abstract syntax tree.
-
-============================================================
-3. Relational operators  
-
-Handle boolean expressions. 
-Boolean expressions can either an integer (0 stands for false and 1 for true) 
-or 'expr <relop> expr' where <relop> is one of the 
-relational operators '==', '!=', '<', '>', <=' and '>='.
-
-The following steps are suggested:
-
-a) In ast.h: define the BoolExpr datatype and the declare the corresponding boolean expressions constructors.
-
-b) In asa.c: implement the new constructor functions.
-
-c) In scanner.flex add the new boolean operators.
-
-d) In parser.bison change the grammar by:
--- adding grammar rules for boolean expressions.
--- define new type rules for boolean expressions.
-
-e) In printAbsTree.c : define a function printBool(BoolExpr* b) which prints the abstract syntax tree stored in b.
 
 ============================================================
+4. Defina em C uma função printMIPS que imprime num ficheiro o código MIPS correspondente à lista de instruções gerada pelo compilador.
 
-4. Commands
+Referência para a pergunta 4: https://www2.cs.arizona.edu/~debray/Teaching/CSc453/DOCS/3addr2spim.pdf
 
-Handle commands following C syntax consisting of assignments, if then and if then else conditional commands, while loops and sequences of commands c1 ; c2 where c1 and c2 are commands.
+=============================================================
 
-The following steps are suggested:
+5. Repita todas as perguntas anteriores para comandos. Neste caso o código intermédio é definido por:
 
-a) In ast.h: define the Cmd datatype and the declare the corresponding command constructors.
+instruction -> VAR := atom 
+instruction -> VAR := atom binop atom
+instruction -> GOTO label
+instruction -> IF VAR relop atom THEN label ELSE label
+instruction -> LAB label
 
-b) In asa.c: implement the new constructor functions.
+atom -> VAR
+atom -> NUMBER
 
-c) In scanner.flex add the new tokens belonging to the language of commands (while, if, then, else, = , ; , { , }).
+label -> LAB_ID
 
-d) In parser.bison change the grammar by:
--- adding grammar rules for commands.
--- define new type rules for commands.
--- define the root variable as a command.
+binop -> PLUS | MINUS | DIV | MULT
+relop -> EQUAL | DIF | LESS | GT | LE | GE
 
-e) In printAbsTree.c : define a function printCmd(Cmd* command) which prints the abstract syntax tree stored in the structure pointed by command.
+Para compilar comandos é necessário ter outra função de compilação de expressões booleanas com protótipo:
 
-f) Change the main function to print commands.
+InstrList compileBool(ExprBool e; char *labelTrue, char *labelFalse); 
+
+onde labelTrue e labelFalse são as labels para onde a execução do programa em código intermédio deverá ir conforme a compilação da expressão booleana seja respectivamente True ou False. 
+
+A função de compilação de comandos (que chama as função de compilação de expressões aritméticas e booleanas) terá protótipo:
+
+InstrList compileCmd(Cmd c);
+
+
+
+
+
+
+
+
+
+
+
 
 
