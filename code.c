@@ -3,10 +3,13 @@
 #include <string.h>
 #include "code.h"
 #include <ctype.h>
+#include "parser.h"
+
+int variavelControlo = 0;
 
 ELEM newVar(char *s) {
   ELEM y;
-  y.kind = STRING;
+  y.kind = STRINGS;
   y.content.name = strdup(s); 
   return y;
 }
@@ -30,25 +33,25 @@ void printElem(ELEM x) {
   if(x.kind==STRING) printf("%s", x.content.name);
 }
 
-INSTR newInstr(OpKind oper, ELEM x, ELEM y, ELEM z, ELEM w) { 
-  INSTR aux;
-  aux.op = oper;
-  aux.first = x;
-  aux.second = y;
-  aux.third = z;
-  aux.fourth = w;
+INSTR *newInstr(OpKind oper, ELEM x, ELEM y, ELEM z, ELEM w) { 
+  INSTR *aux;
+  aux->op = oper;
+  aux->first = x;
+  aux->second = y;
+  aux->third = z;
+  aux->fourth = w;
   return aux;
 }
 
-INSTRLIST newList(INSTR head, INSTRLIST tail) {
-  INSTRLIST new = malloc(sizeof(struct InstrList));
-  new -> instruction = head;
-  new -> next = tail;
+INSTRLIST *newList(INSTR *head, INSTRLIST *tail) {
+  INSTRLIST *new = malloc(sizeof(struct InstrList));
+  new->instruction = head;
+  new->next = tail;
   return new;
 }
 
-INSTRLIST addLast(INSTR s, INSTRLIST l) {
-    INSTRLIST aux = l;
+INSTRLIST *addLast(INSTR *s, INSTRLIST *l) {
+    INSTRLIST *aux = l;
     if(l == NULL) {
       return newList(s, NULL);
     }
@@ -59,150 +62,143 @@ INSTRLIST addLast(INSTR s, INSTRLIST l) {
     return aux;
 }
 
-INSTRLIST append(INSTRLIST s, INSTRLIST l) {
-    INSTRLIST aux = s;
-    if(s == NULL) {
-      return l;
-    }
-    if(l == NULL) {
-      return s;
-    }
-    while((s->next) != NULL) {
-      s = s->next;
-    }
-    s->next = l;
-    return aux;
+INSTRLIST *append(INSTRLIST *s, INSTRLIST *l) {
+    INSTRLIST *p;
+    if(s==NULL) return l;
+    for(p=s; p->next !=NULL; p=p->next) {}
+    p->next = l;
+    return s;
 }
 
-INSTR getFirst(INSTRLIST s) {
+INSTR *getFirst(INSTRLIST *s) {
     return s->instruction;
 }
 
-INSTRLIST nextInstrs(INSTRLIST s) {
+INSTRLIST *nextInstrs(INSTRLIST *s) {
     return s->next;
 }
 
-void printInstr(INSTR s) {
-    switch(s.op) {
-      case PLUS:
-        printElem(s.first);
+void printInstr(INSTR *s) {
+    switch(s->op) {
+      case CPLUS:
+        printElem(s->first);
         printf(" = ");
-        printElem(s.second);
+        printElem(s->second);
         printf(" + ");
-        printElem(s.third);
+        printElem(s->third);
         printf("\n");
         break;
 
-      case MINUS:
-        printElem(s.first);
+      case CMINUS:
+        printElem(s->first);
         printf(" = ");
-        printElem(s.second);
+        printElem(s->second);
         printf(" - ");
-        printElem(s.third);
+        printElem(s->third);
         printf("\n");
         break;
 
-      case DIV:
-        printElem(s.first);
+      case CDIV:
+        printElem(s->first);
         printf(" = ");
-        printElem(s.second);
+        printElem(s->second);
         printf(" / ");
-        printElem(s.third);
+        printElem(s->third);
         printf("\n");
         break;
 
-      case MULT:
-        printElem(s.first);
+      case CTIMES:
+        printElem(s->first);
         printf(" = ");
-        printElem(s.second);
+        printElem(s->second);
         printf(" * ");
-        printElem(s.third);
+        printElem(s->third);
         printf("\n");
         break;
       
       case GOTO:
-        printf("GOTO %s\n", s.first.content.name);
+        printf("GOTO %s\n", s->first.content.name);
         break;
 
       case LABEL:
-        printf("LABEL %s\n", s.first.content.name);
+        printf("LABEL %s\n", s->first.content.name);
         break;
       
       case IFG:
         printf("IF "); 
-        printElem(s.first);
+        printElem(s->first);
         printf(">");
-        printElem(s.second);
+        printElem(s->second);
         printf(" THEN ");
-        printElem(s.third);
+        printElem(s->third);
         printf(" ELSE ");
-        printElem(s.fourth);
+        printElem(s->fourth);
         printf("\n");
         break;
 
       case IFL:
         printf("IF "); 
-        printElem(s.first);
+        printElem(s->first);
         printf("<");
-        printElem(s.second);
+        printElem(s->second);
         printf(" THEN ");
-        printElem(s.third);
+        printElem(s->third);
         printf(" ELSE ");
-        printElem(s.fourth);
+        printElem(s->fourth);
         printf("\n");
         break;
 
       case IFGE:
         printf("IF "); 
-        printElem(s.first);
+        printElem(s->first);
         printf(">=");
-        printElem(s.second);
+        printElem(s->second);
         printf(" THEN ");
-        printElem(s.third);
+        printElem(s->third);
         printf(" ELSE ");
-        printElem(s.fourth);
+        printElem(s->fourth);
         printf("\n");
         break;
 
       case IFLE:
         printf("IF "); 
-        printElem(s.first);
+        printElem(s->first);
         printf("<=");
-        printElem(s.second);
+        printElem(s->second);
         printf(" THEN ");
-        printElem(s.third);
+        printElem(s->third);
         printf(" ELSE ");
-        printElem(s.fourth);
+        printElem(s->fourth);
         printf("\n");
         break;
 
       case IFEQ:
         printf("IF "); 
-        printElem(s.first);
+        printElem(s->first);
         printf("==");
-        printElem(s.second);
+        printElem(s->second);
         printf(" THEN ");
-        printElem(s.third);
+        printElem(s->third);
         printf(" ELSE ");
-        printElem(s.fourth);
+        printElem(s->fourth);
         printf("\n");
         break;
 
       case IFNE:
         printf("IF "); 
-        printElem(s.first);
+        printElem(s->first);
         printf("!=");
-        printElem(s.second);
+        printElem(s->second);
         printf(" THEN ");
-        printElem(s.third);
+        printElem(s->third);
         printf(" ELSE ");
-        printElem(s.fourth);
+        printElem(s->fourth);
         printf("\n");
         break;
       
-      case ATRIB:
-        printf("%s = ", s.first.content.name);
-        printElem(s.second);
+      case ATRIBU:
+        printf("%s = ", s->first.content.name);
+        printElem(s->second);
         break;
      
       default:
@@ -210,13 +206,97 @@ void printInstr(INSTR s) {
     }
 }
 
-void printInstrList(INSTRLIST s) {
+void printInstrList(INSTRLIST *s) {
     while((s->next) != NULL) {
       printInstr(s->instruction);
       s = s->next;
     }
 }
 
-InstrList compileExp(Expr e, char *r) {
-  // acabar!
+int compileOp(int op) {
+  switch(op) {
+    case PLUS:
+      return CPLUS;
+    case MINUS:
+      return CMINUS;
+    case DIV:
+      return CDIV;
+    case TIMES:
+      return CTIMES;
+  }
+}
+
+INSTRLIST *compileExp(Expr* e, char *r) {
+    char* r1;
+    char* r2;
+    switch(e->kind) {
+        case E_OPERATION:
+          r1 = strdup(newTemp());
+          r2 = strdup(newTemp());
+          INSTRLIST *code1 = compileExp(e->attr.op.left, r1);
+          INSTRLIST *code2 = compileExp(e->attr.op.right, r2);
+          int op = compileOp(e->attr.op.operator);
+          INSTRLIST *code3 = append(code1, code2);
+          INSTRLIST *code4 = append(code3, newList(newInstr(op, newVar(r), newVar(r1), newVar(r2), empty()), NULL));
+          return code4;
+          break;
+        default: 
+          break;
+    }
+}
+
+char* newTemp() {
+  char aux[20];
+  sprintf(aux, "t%d", variavelControlo++);
+  char* aux2 = strdup(aux);
+  return aux2;
+}
+
+void printMIPS(INSTRLIST *x) {
+  while((x->next)!=NULL) {
+    switch(x->instruction->op) {
+      case CPLUS:
+        break;
+
+      case CMINUS:
+        break;
+      
+      case CTIMES:
+        break;
+      
+      case CDIV:
+        break;
+      
+      case GOTO:
+        break;
+      
+      case IFG:
+        break;
+      
+      case IFL:
+        break;
+      
+      case IFGE:
+        break;
+      
+      case IFLE:
+        break;
+      
+      case IFEQ:
+        break;
+      
+      case IFNE:
+        break;
+      
+      case LABEL:
+        break;
+      
+      case ATRIBU:
+        break;
+      
+      default:
+        break;
+    }
+    x = x->next;
+  }
 }

@@ -54,6 +54,8 @@ t5 := t1 - t4;
 
 e neste caso o registo r é igual a t5.
 
+DONE
+
 
 ============================================================
 4. Defina em C uma função printMIPS que imprime num ficheiro o código MIPS correspondente à lista de instruções gerada pelo compilador.
