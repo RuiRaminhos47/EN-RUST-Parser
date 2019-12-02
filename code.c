@@ -10,7 +10,7 @@ int variavelControlo = 0;
 ELEM newVar(char *s) {
   ELEM y;
   y.kind = STRINGS;
-  y.content.name = strdup(s); 
+  y.content.name = strdup(s);
   return y;
 }
 
@@ -33,7 +33,7 @@ void printElem(ELEM x) {
   if(x.kind==STRING) printf("%s", x.content.name);
 }
 
-INSTR *newInstr(OpKind oper, ELEM x, ELEM y, ELEM z, ELEM w) { 
+INSTR *newInstr(OpKind oper, ELEM x, ELEM y, ELEM z, ELEM w) {
   INSTR *aux;
   aux->op = oper;
   aux->first = x;
@@ -115,7 +115,7 @@ void printInstr(INSTR *s) {
         printElem(s->third);
         printf("\n");
         break;
-      
+
       case GOTO:
         printf("GOTO %s\n", s->first.content.name);
         break;
@@ -123,9 +123,9 @@ void printInstr(INSTR *s) {
       case LABEL:
         printf("LABEL %s\n", s->first.content.name);
         break;
-      
+
       case IFG:
-        printf("IF "); 
+        printf("IF ");
         printElem(s->first);
         printf(">");
         printElem(s->second);
@@ -137,7 +137,7 @@ void printInstr(INSTR *s) {
         break;
 
       case IFL:
-        printf("IF "); 
+        printf("IF ");
         printElem(s->first);
         printf("<");
         printElem(s->second);
@@ -149,7 +149,7 @@ void printInstr(INSTR *s) {
         break;
 
       case IFGE:
-        printf("IF "); 
+        printf("IF ");
         printElem(s->first);
         printf(">=");
         printElem(s->second);
@@ -161,7 +161,7 @@ void printInstr(INSTR *s) {
         break;
 
       case IFLE:
-        printf("IF "); 
+        printf("IF ");
         printElem(s->first);
         printf("<=");
         printElem(s->second);
@@ -173,7 +173,7 @@ void printInstr(INSTR *s) {
         break;
 
       case IFEQ:
-        printf("IF "); 
+        printf("IF ");
         printElem(s->first);
         printf("==");
         printElem(s->second);
@@ -185,7 +185,7 @@ void printInstr(INSTR *s) {
         break;
 
       case IFNE:
-        printf("IF "); 
+        printf("IF ");
         printElem(s->first);
         printf("!=");
         printElem(s->second);
@@ -195,12 +195,12 @@ void printInstr(INSTR *s) {
         printElem(s->fourth);
         printf("\n");
         break;
-      
+
       case ATRIBU:
         printf("%s = ", s->first.content.name);
         printElem(s->second);
         break;
-     
+
       default:
         break;
     }
@@ -240,7 +240,7 @@ INSTRLIST *compileExp(Expr* e, char *r) {
           INSTRLIST *code4 = append(code3, newList(newInstr(op, newVar(r), newVar(r1), newVar(r2), empty()), NULL));
           return code4;
           break;
-        default: 
+        default:
           break;
     }
 }
@@ -252,48 +252,77 @@ char* newTemp() {
   return aux2;
 }
 
-void printMIPS(INSTRLIST *x) {
+void printMIPS(INSTRLIST *x) { // temos de printar as variaveis antes e dps O MIPS das operações, ou seja, criar uma
   while((x->next)!=NULL) {
-    switch(x->instruction->op) {
+    switch(x->instruction->op) { //descobrir como se acede aos registos r1,r2 e r3
       case CPLUS:
+        printf("lw %s into r1\n", x->instruction->second.content.name);
+        printf("lw %s into r2\n", x->instruction->third.content.name); //x->instruction->third.content.val
+        printf("add r3, r1, r2"); //x->instruction->first.content.name, x->instruction->second.content.name , x->instruction->third.content.val
+        printf("sw r3 into %s\n", x->instruction->first.content.name);
         break;
 
       case CMINUS:
+        printf("lw %s into r1\n", x->instruction->second.content.name);
+        printf("lw %s into r2\n", x->instruction->third.content.name);
+        printf("sub r3, r1, r2");
+        printf("sw r3 into %s\n", x->instruction->first.content.name);
         break;
-      
+
       case CTIMES:
+        printf("lw %s into r1\n", x->instruction->second.content.name);
+        printf("lw %s into r2\n", x->instruction->third.content.name);
+        printf("mul r3, r1, r2");
+        printf("sw r3 into %s\n", x->instruction->first.content.name);
         break;
-      
+
       case CDIV:
+        printf("lw %s into r1\n", x->instruction->second.content.name);
+        printf("lw %s into r2\n", x->instruction->third.content.name);
+        printf("div r3, r1, r2");
+        printf("sw r3 into %s\n", x->instruction->first.content.name);
         break;
-      
+
+
       case GOTO:
+        printf("GOTO %s:\n\n", x->instruction->first.content.name);
         break;
-      
+
       case IFG:
         break;
-      
+
       case IFL:
         break;
-      
+
       case IFGE:
         break;
-      
+
       case IFLE:
         break;
-      
+
       case IFEQ:
         break;
-      
+
       case IFNE:
         break;
-      
+
       case LABEL:
+        printf("LABEL %s:\n", x->instruction->first.content.name);
         break;
-      
+
       case ATRIBU:
+
+        if(x->instruction->second.kind==INT_CONST){
+        printf("lw %s into r1\n", x->instruction->second.content.name);
+        }
+
+        if(x->instruction->second.kind == STRINGS){
+          printf("lw %sinto r1\n", x->instruction->second.content.val);
+        }
+
+        printf("sw r1 into %s", x-> instruction->first.content.name);
         break;
-      
+
       default:
         break;
     }

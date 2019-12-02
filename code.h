@@ -10,10 +10,10 @@ typedef enum { EMPTY, INT_CONST, STRINGS } ElemKind;
 typedef struct {
   ElemKind kind;
   union { // pode ser uma variavel em formato string ou um valor int
-    int val; 
+    int val;
     char *name;
   } content;
-} ELEM; 
+} ELEM;
 
 typedef struct {
   OpKind op;
