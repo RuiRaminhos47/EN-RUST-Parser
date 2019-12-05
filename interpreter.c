@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "parser.h"
 #include "printAbsTree.h"
+#include "hash.h"
+#include "code.h"
 
 int eval(Expr* expr) {
   int result = 0;
@@ -44,11 +46,13 @@ int main(int argc, char** argv) {
       printf("'%s': could not open file\n", *argv);
       return 1;
     }
-  } //  yyin = stdin
+  } 
   
   if (yyparse() == 0) {
-      //printf("Result = %d\n", eval(root));
-      printCmdList(root, 0);
+      // Primeiro trabalho
+      // printCmdList(root, 0);
+
+      printInstrList(compileExp(root, "var"));
   }
 
   return 0;

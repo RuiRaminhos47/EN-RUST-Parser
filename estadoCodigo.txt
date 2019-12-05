@@ -1,0 +1,4 @@
+1. Comentadas todas as funções depois de compileExp.
+2. No parser.bison, foram alteradas as linhas 77 e 82 (o root foi alterado para testar expressões).
+3. Hash já criada e pronta a usar.
+4. MAIN PROBLEM - O interpreter não está a reconhecer as funções da main: printInstrList e compileExp (parece-me ter todos os #includes corretos).

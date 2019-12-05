@@ -4,6 +4,7 @@
 #include "code.h"
 #include <ctype.h>
 #include "parser.h"
+#include "hash.h"
 
 int variavelControlo = 0;
 
@@ -230,6 +231,7 @@ INSTRLIST *compileExp(Expr* e, char *r) {
     char* r1;
     char* r2;
     switch(e->kind) {
+        
         case E_OPERATION:
           r1 = strdup(newTemp());
           r2 = strdup(newTemp());
@@ -240,6 +242,7 @@ INSTRLIST *compileExp(Expr* e, char *r) {
           INSTRLIST *code4 = append(code3, newList(newInstr(op, newVar(r), newVar(r1), newVar(r2), empty()), NULL));
           return code4;
           break;
+        
         default:
           break;
     }
@@ -250,6 +253,23 @@ char* newTemp() {
   sprintf(aux, "t%d", variavelControlo++);
   char* aux2 = strdup(aux);
   return aux2;
+}
+
+/*
+INSTRLIST compileBool(BoolExpr cond, char* labelTrue, char* labelFalse) {
+  char* r1;
+  char* r2;
+  r1 = strdup(newTemp());
+  r2 = strdup(newTemp());
+  INSTRLIST* code1 = compileExp(cond->attr.op.bleft, r1);
+  INSTRLIST* code2 = compileExp(cond->attr.op.bright, r2);
+  INSTRLIST* code3 = append(code1, code2);
+  INSTRLIST* code4 = append(code3, newList(newInstr(newVar(r1)), NULL));
+  return code4;
+}
+
+INSTRLIST compileCmd(Cmd c) {
+
 }
 
 void printMIPS(INSTRLIST *x) { // temos de printar as variaveis antes e dps O MIPS das operações, ou seja, criar uma
@@ -317,7 +337,7 @@ void printMIPS(INSTRLIST *x) { // temos de printar as variaveis antes e dps O MI
         }
 
         if(x->instruction->second.kind == STRINGS){
-          printf("lw %sinto r1\n", x->instruction->second.content.val);
+          printf("lw %s into r1\n", x->instruction->second.content.val);
         }
 
         printf("sw r1 into %s", x-> instruction->first.content.name);
@@ -329,3 +349,6 @@ void printMIPS(INSTRLIST *x) { // temos de printar as variaveis antes e dps O MI
     x = x->next;
   }
 }
+*/
+
+

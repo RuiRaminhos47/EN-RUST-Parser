@@ -42,10 +42,13 @@ INSTRLIST *newList(INSTR *head, INSTRLIST *tail); // criar lista
 INSTR *getFirst(INSTRLIST *s); // retorna o primeiro elemento da lista s
 INSTRLIST *nextInstrs(INSTRLIST *s); // retorna a cauda
 void printInstr(INSTR *s);
+void printInstrList(INSTRLIST *s);
 
 INSTRLIST *compileExp(Expr* e, char *r);
 int compileOp(int operator);
 char* newTemp();
+INSTRLIST compileBool(BoolExpr cond, char* labelTrue, char* labelFalse);
+INSTRLIST compileCmd(Cmd c);
 
 void printMIPS(INSTRLIST *x);
 #endif

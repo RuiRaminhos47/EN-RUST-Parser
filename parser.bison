@@ -73,11 +73,13 @@ extern int yyline;
 extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
-commandList* root;
+// commandList* root;
+Expr* root;
 }
 
 %%
-program: FN MAIN PARIN PAROUT COMBEG commandlist COMEND { root = $6; }
+// program: FN MAIN PARIN PAROUT COMBEG commandlist COMEND { root = $6; }
+program: expr { root = $1; }
 
 expr: 
   INT { 

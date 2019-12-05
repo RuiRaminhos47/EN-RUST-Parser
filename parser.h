@@ -51,9 +51,10 @@ extern int yyline;
 extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
-commandList* root;
+// commandList* root;
+Expr* root;
 
-#line 57 "parser.h" /* yacc.c:1909  */
+#line 58 "parser.h" /* yacc.c:1909  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -109,7 +110,7 @@ union YYSTYPE
   Cmd* cmdd;
   commandList* cmdl;
 
-#line 113 "parser.h" /* yacc.c:1909  */
+#line 114 "parser.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
