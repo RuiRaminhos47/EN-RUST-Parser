@@ -35,6 +35,7 @@ void printElem(ELEM x) {
 }
 
 INSTR *newInstr(OpKind oper, ELEM x, ELEM y, ELEM z, ELEM w) {
+  printf("newInstr\n");
   INSTR *aux;
   aux->op = oper;
   aux->first = x;
@@ -45,10 +46,12 @@ INSTR *newInstr(OpKind oper, ELEM x, ELEM y, ELEM z, ELEM w) {
 }
 
 INSTRLIST *newList(INSTR *head, INSTRLIST *tail) {
-  INSTRLIST *new = malloc(sizeof(struct InstrList));
-  new->instruction = head;
-  new->next = tail;
-  return new;
+  printf("newList\n");
+  INSTRLIST* aux = (INSTRLIST*) malloc(sizeof(INSTRLIST)); // ERRO
+  printf("newList Pos alocamento\n");
+  aux->instruction = head;
+  aux->next = tail;
+  return aux;
 }
 
 INSTRLIST *addLast(INSTR *s, INSTRLIST *l) {
@@ -228,20 +231,40 @@ int compileOp(int op) {
 }
 
 INSTRLIST *compileExp(Expr* e, char *r) {
-    char* r1;
-    char* r2;
+    printf("CompileExp\n");
+    char* r1 = (char*) malloc(sizeof(char));
+    char* r2 = (char*) malloc(sizeof(char));
+    INSTRLIST* code1 = (INSTRLIST*) malloc(sizeof(INSTRLIST));
+    INSTRLIST* code2 = (INSTRLIST*) malloc(sizeof(INSTRLIST));
+    INSTRLIST* code3 = (INSTRLIST*) malloc(sizeof(INSTRLIST));
+    INSTRLIST* code4 = (INSTRLIST*) malloc(sizeof(INSTRLIST));
+
     switch(e->kind) {
         
         case E_OPERATION:
+          printf("CompileExp-Operation\n");
           r1 = strdup(newTemp());
           r2 = strdup(newTemp());
-          INSTRLIST *code1 = compileExp(e->attr.op.left, r1);
-          INSTRLIST *code2 = compileExp(e->attr.op.right, r2);
+          code1 = compileExp(e->attr.op.left, r1);
+          code2 = compileExp(e->attr.op.right, r2);
           int op = compileOp(e->attr.op.operator);
-          INSTRLIST *code3 = append(code1, code2);
-          INSTRLIST *code4 = append(code3, newList(newInstr(op, newVar(r), newVar(r1), newVar(r2), empty()), NULL));
+          code3 = append(code1, code2);
+          code4 = append(code3, newList(newInstr(op, newVar(r), newVar(r1), newVar(r2), empty()), NULL));
           return code4;
           break;
+        
+        case E_INTEGER:
+          printf("CompileExp-Int\n");
+          r1 = strdup(r);
+          code1 = newList(newInstr(ATRIBU, newVar(r1), newInt(e->attr.value), empty(), empty()), NULL); 
+          return code1;
+          break;
+
+        case E_VARIABLE:
+          printf("CompileExp-Var\n");
+          r1 =  strdup(r);
+          code1 = newList(newInstr(ATRIBU, newVar(r1), newVar(e->attr.var), empty(), empty()), NULL);
+          return code1;
         
         default:
           break;

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "parser.h"
 #include "printAbsTree.h"
 #include "hash.h"
@@ -38,7 +39,7 @@ int eval(Expr* expr) {
 }
 
 int main(int argc, char** argv) {
-  --argc; ++argv;
+  /*--argc; ++argv;
   
   if (argc != 0) {
     yyin = fopen(*argv, "r");
@@ -52,8 +53,14 @@ int main(int argc, char** argv) {
       // Primeiro trabalho
       // printCmdList(root, 0);
 
-      printInstrList(compileExp(root, "var"));
-  }
+  }*/
+
+  Expr* e1 = ast_integer(1);
+  Expr* e2 = ast_integer(1);
+  Expr* e3 = ast_integer(5);
+  Expr* e6 = ast_operation(MINUS, e3, e2);
+  //Expr* e4 = ast_operation(PLUS, e1, e6);
+  INSTRLIST* aux = compileExp(e6, "t0");
 
   return 0;
 

@@ -51,8 +51,8 @@ extern int yyline;
 extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
-// commandList* root;
-Expr* root;
+commandList* root;
+
 
 #line 58 "parser.h" /* yacc.c:1909  */
 
