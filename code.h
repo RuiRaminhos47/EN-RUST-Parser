@@ -3,7 +3,7 @@
 #define __code_h__
 #include "ast.h"
 
-typedef enum { CPLUS, CMINUS, CTIMES, CDIV, GOTO, IFG, IFL, IFGE, IFLE, IFEQ, IFNE, LABEL, ATRIBU } OpKind;
+typedef enum { CPLUS, CMINUS, CTIMES, CDIV, GOTO, IFBOOLCONST, IFBOOLTRUEORFALSE, IFG, IFL, IFGE, IFLE, IFEQ, IFNE, LABEL, ATRIBU } OpKind;
 
 typedef enum { EMPTY, INT_CONST, STRINGS } ElemKind;
 

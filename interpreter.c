@@ -68,6 +68,11 @@ int main(int argc, char** argv) {
 
   // Booleano expressões
   /*
+  BoolExpr* e1 = expression_string(TRUE);
+  INSTRLIST* aux = compileBool(e1, "labelV", "labelF");
+  printInstrList(aux);
+  */
+  /*
   Expr* e1 = ast_integer(2);
   Expr* e2 = ast_integer(3);
   Expr* e3 = ast_operation(PLUS, e1, e2);
@@ -77,9 +82,8 @@ int main(int argc, char** argv) {
   INSTRLIST* aux = compileBool(expression_operation(GT, e3, e6), "labelV", "labelF");
   printInstrList(aux);
   */
-
-  // Comandos
   
+  // Comandos
 
 
 }

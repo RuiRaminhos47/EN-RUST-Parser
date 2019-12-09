@@ -17,7 +17,7 @@ struct _Expr {
       struct _Expr* left;
       struct _Expr* right;
     } op; // for binary expressions
-    char* var;
+    char* var; // for var
   } attr;
 };
 

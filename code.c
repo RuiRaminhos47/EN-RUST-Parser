@@ -137,6 +137,26 @@ void printInstr(INSTR *s) {
         printf("LABEL %s\n", s->first->content.name);
         break;
 
+      case IFBOOLCONST:
+        printf("IF ");
+        printElem(s->first);
+        printf(" THEN ");
+        printElem(s->second);
+        printf(" ELSE ");
+        printElem(s->third);
+        printf("\n");
+        break;
+
+      case IFBOOLTRUEORFALSE:
+        printf("IF ");
+        printElem(s->first);
+        printf(" THEN ");
+        printElem(s->second);
+        printf(" ELSE ");
+        printElem(s->third);
+        printf("\n");
+        break;
+
       case IFG:
         printf("IF ");
         printElem(s->first);
@@ -299,54 +319,87 @@ INSTRLIST* compileBool(BoolExpr* cond, char* labelTrue, char* labelFalse) {
   INSTRLIST* code3;
   INSTRLIST* code4;
 
-  r1 = strdup(newTemp());
-  r2 = strdup(newTemp());
-  code1 = compileExp(cond->attr.op.bleft, r1);
-  code2 = compileExp(cond->attr.op.bright, r2);
-  code3 = append(code1, code2);
-  switch(cond->attr.op.operator) { // EQUALTO, NEQUALTO, GT, LT, GET, LETH - IFG, IFL, IFGE, IFLE, IFEQ, IFNE
-      case EQUALTO:
-        code4 = append(code3, newList(newInstr(IFEQ, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
-        break;
+  switch(cond->kind) {
 
-      case NEQUALTO:  
-        code4 = append(code3, newList(newInstr(IFNE, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
-        break;
+    case(EB_CONSTANT):
+      r1 = strdup(newTemp());
+      code1 = newList(newInstr(IFBOOLCONST, newVar(r1), newVar(labelTrue), newVar(labelFalse), empty()), NULL);
+      return code1;
+      break;
 
-      case GT:
-        code4 = append(code3, newList(newInstr(IFG, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
-        break;
+    case(EB_CONSTANTS):
+      r1 = strdup(newTemp());
+      code1 = newList(newInstr(IFBOOLTRUEORFALSE, newVar(r1), newVar(labelTrue), newVar(labelFalse), empty()), NULL);
+      return code1;
+      break;
 
-      case LT:
-        code4 = append(code3, newList(newInstr(IFL, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
-        break;
+    case(EB_OPERATION):
+      r1 = strdup(newTemp());
+      r2 = strdup(newTemp());
+      code1 = compileExp(cond->attr.op.bleft, r1);
+      code2 = compileExp(cond->attr.op.bright, r2);
+      code3 = append(code1, code2);
+      switch(cond->attr.op.operator) { // EQUALTO, NEQUALTO, GT, LT, GET, LETH - IFG, IFL, IFGE, IFLE, IFEQ, IFNE
+          case EQUALTO:
+            code4 = append(code3, newList(newInstr(IFEQ, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
+            break;
 
-      case GET:
-        code4 = append(code3, newList(newInstr(IFGE, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
-        break;
+          case NEQUALTO:  
+            code4 = append(code3, newList(newInstr(IFNE, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
+            break;
 
-      case LETH:
-        code4 = append(code3, newList(newInstr(IFLE, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
-        break;
+          case GT:
+            code4 = append(code3, newList(newInstr(IFG, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
+            break;
 
-      default:
-        break;
+          case LT:
+            code4 = append(code3, newList(newInstr(IFL, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
+            break;
+
+          case GET:
+            code4 = append(code3, newList(newInstr(IFGE, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
+            break;
+
+          case LETH:
+            code4 = append(code3, newList(newInstr(IFLE, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
+            break;
+
+          default:
+            break;
+      }
+      return code4;
+      break;
+      
+    default:
+      break;
   }
-  return code4;
 }
 
 INSTRLIST* compileCmd(Cmd* comando) {
+  char* varAux;
+  char* valAux;
   char* labelTrue; 
   char* labelFalse;
+  char* labelStart;
   char* labelEnd;
   INSTRLIST* code1;
   INSTRLIST* code2;
   INSTRLIST* code3;
   INSTRLIST* code4;
+  INSTRLIST* code5;
+  INSTRLIST* code6;
+  INSTRLIST* code7;
 
   switch(comando->kind) { // CONDITIONAL, CONDITIONAL2, LOOP, PRINT, ATRIB, READ, PRINT2
-    case CONDITIONAL: // IF
 
+    case CONDITIONAL: // IF
+      labelTrue = newLabel();
+      labelEnd = newLabel();
+      code1 = compileBool(comando->attr.it.condition, labelTrue, labelEnd);
+      code2 = append(code1, newList(newInstr(LABEL, newVar(labelTrue), empty(), empty(), empty()), NULL));
+      code3 = append(code2, compileCmdList(comando->attr.it.list));
+      code4 = append(code3, newList(newInstr(LABEL, newVar(labelEnd), empty(), empty(), empty()), NULL));
+      return code4;
       break;
 
     case CONDITIONAL2: // IF ELSE
@@ -354,13 +407,24 @@ INSTRLIST* compileCmd(Cmd* comando) {
       labelFalse = newLabel();
       labelEnd = newLabel();
       code1 = compileBool(comando->attr.ite.condition, labelTrue, labelFalse);
-      code2 = compileCmdList(comando->attr.ite.list1); 
-      
-
+      code2 = append(code1, newList(newInstr(LABEL, newVar(labelTrue), empty(), empty(), empty()), NULL));
+      code3 = append(code2, compileCmdList(comando->attr.ite.list1));
+      code4 = append(code3, newList(newInstr(GOTO, newVar(labelEnd), empty(), empty(), empty()), NULL));
+      code5 = append(code4, newList(newInstr(LABEL, newVar(labelFalse), empty(), empty(), empty()), NULL));
+      code6 = append(code5, compileCmdList(comando->attr.ite.list2));
+      code7 = append(code6, newList(newInstr(LABEL, newVar(labelEnd), empty(), empty(), empty()), NULL));
+      return code7;
       break;
 
     case LOOP: // WHILE
-
+      labelStart = newLabel();
+      labelEnd = newLabel();
+      code1 = compileBool(comando->attr.w.condition, labelStart, labelEnd);
+      code2 = append(code1, newList(newInstr(LABEL, newVar(labelStart), empty(), empty(), empty()), NULL));
+      code3 = append(code2, compileCmdList(comando->attr.w.list));
+      code4 = append(code3, compileBool(comando->attr.w.condition, labelStart, labelEnd));
+      code5 = append(code4, newList(newInstr(LABEL, newVar(labelEnd), empty(), empty(), empty()), NULL));
+      return code5;
       break;
 
     case PRINT: // PRINT(string)
@@ -368,7 +432,7 @@ INSTRLIST* compileCmd(Cmd* comando) {
       break;
  
     case ATRIB: // ATRIB
-
+      
       break;
 
     case READ: // READ
@@ -395,7 +459,7 @@ INSTRLIST* compileCmdList(commandList* l) {
 
 /*
 void printMIPS(INSTRLIST *x) { // temos de printar as variaveis antes e dps O MIPS das operações, ou seja, criar uma
-  while((x->next)!=NULL) {
+  while((x)!=NULL) {
     switch(x->instruction->op) { //descobrir como se acede aos registos r1,r2 e r3
       case CPLUS:
         printf("lw %s into r1\n", x->instruction->second.content.name);
