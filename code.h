@@ -17,10 +17,10 @@ typedef struct {
 
 typedef struct {
   OpKind op;
-  ELEM first;
-  ELEM second;
-  ELEM third;
-  ELEM fourth;
+  ELEM* first;
+  ELEM* second;
+  ELEM* third;
+  ELEM* fourth;
 } INSTR;
 
 typedef struct InstrList { // lsita de instruçoes
@@ -28,13 +28,13 @@ typedef struct InstrList { // lsita de instruçoes
   struct InstrList *next;
 } INSTRLIST;
 
-ELEM newVar(char *s);
-ELEM newInt(int n);
-ELEM empty();
-int getValue(ELEM x);
-void printElem(ELEM x);
+ELEM* newVar(char *s);
+ELEM* newInt(int n);
+ELEM* empty();
+int getValue(ELEM* x);
+void printElem(ELEM* x);
 
-INSTR *newInstr(OpKind oper, ELEM x, ELEM y, ELEM z, ELEM w);
+INSTR *newInstr(OpKind oper, ELEM* x, ELEM* y, ELEM* z, ELEM* w);
 
 INSTRLIST *addLast(INSTR *s, INSTRLIST *l); // adiciona INSTR s ao fim da lista l
 INSTRLIST *append(INSTRLIST *s, INSTRLIST *l); // concatena duas listas
@@ -47,8 +47,9 @@ void printInstrList(INSTRLIST *s);
 INSTRLIST *compileExp(Expr* e, char *r);
 int compileOp(int operator);
 char* newTemp();
-INSTRLIST compileBool(BoolExpr cond, char* labelTrue, char* labelFalse);
-INSTRLIST compileCmd(Cmd c);
+INSTRLIST* compileBool(BoolExpr* cond, char* labelTrue, char* labelFalse);
+INSTRLIST* compileCmd(Cmd* c);
+INSTRLIST* compileCmdList(commandList* l);
 
 void printMIPS(INSTRLIST *x);
 #endif

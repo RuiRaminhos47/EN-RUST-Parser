@@ -25,8 +25,8 @@ typedef struct _Expr Expr; // Convenience typedef
 
 struct _BoolExpr {
   enum { 
-    EB_CONSTANT,
-    EB_CONSTANTS,
+    EB_CONSTANT, // 1 ou 0
+    EB_CONSTANTS, // true ou false
     EB_OPERATION
   } kind;
   union {

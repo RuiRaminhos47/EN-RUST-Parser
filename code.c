@@ -7,36 +7,47 @@
 #include "hash.h"
 
 int variavelControlo = 0;
+int variavelControlo2 = 0;
 
-ELEM newVar(char *s) {
-  ELEM y;
-  y.kind = STRINGS;
-  y.content.name = strdup(s);
+ELEM* newVar(char *s) {
+  ELEM* y = (ELEM*) malloc(sizeof(ELEM));
+  y->kind = STRINGS;
+  y->content.name = strdup(s);
   return y;
 }
 
-ELEM newInt(int n) {
-  ELEM y;
-  y.kind = INT_CONST;
-  y.content.val = n;
+ELEM* newInt(int n) {
+  ELEM* y = (ELEM*) malloc(sizeof(ELEM));
+  y->kind = INT_CONST;
+  y->content.val = n;
   return y;
 }
 
-ELEM empty() {
-  ELEM y;
-  y.kind = EMPTY;
+ELEM* empty() {
+  ELEM* y = (ELEM*) malloc(sizeof(ELEM));
+  y->kind = EMPTY;
   return y;
 }
 
-void printElem(ELEM x) {
-  if(x.kind==EMPTY) return;
-  if(x.kind==INT_CONST) printf("%d", x.content.val);
-  if(x.kind==STRING) printf("%s", x.content.name);
+void printElem(ELEM* x) {
+  if(x->kind==EMPTY) return;
+  if(x->kind==INT_CONST) printf("%d", x->content.val);
+  if(x->kind==STRINGS) printf("%s", x->content.name);
 }
 
-INSTR *newInstr(OpKind oper, ELEM x, ELEM y, ELEM z, ELEM w) {
-  printf("newInstr\n");
-  INSTR *aux;
+int getValue(ELEM* x) { 
+  if(x->kind==STRINGS) {
+    if(lookup(x->content.name)!=NULL) return lookup(x->content.name)->valor;
+    else return -1000;
+  }
+  if(x->kind==INT_CONST) {
+    return x->content.val;
+  }
+  else return -1000;
+}
+
+INSTR *newInstr(OpKind oper, ELEM* x, ELEM* y, ELEM* z, ELEM* w) {
+  INSTR *aux = (INSTR*) malloc(sizeof(INSTR));
   aux->op = oper;
   aux->first = x;
   aux->second = y;
@@ -46,9 +57,7 @@ INSTR *newInstr(OpKind oper, ELEM x, ELEM y, ELEM z, ELEM w) {
 }
 
 INSTRLIST *newList(INSTR *head, INSTRLIST *tail) {
-  printf("newList\n");
-  INSTRLIST* aux = (INSTRLIST*) malloc(sizeof(INSTRLIST)); // ERRO
-  printf("newList Pos alocamento\n");
+  INSTRLIST* aux = (INSTRLIST*) malloc(sizeof(*aux)); 
   aux->instruction = head;
   aux->next = tail;
   return aux;
@@ -121,11 +130,11 @@ void printInstr(INSTR *s) {
         break;
 
       case GOTO:
-        printf("GOTO %s\n", s->first.content.name);
+        printf("GOTO %s\n", s->first->content.name);
         break;
 
       case LABEL:
-        printf("LABEL %s\n", s->first.content.name);
+        printf("LABEL %s\n", s->first->content.name);
         break;
 
       case IFG:
@@ -201,8 +210,9 @@ void printInstr(INSTR *s) {
         break;
 
       case ATRIBU:
-        printf("%s = ", s->first.content.name);
+        printf("%s = ", s->first->content.name);
         printElem(s->second);
+        printf("\n");
         break;
 
       default:
@@ -211,7 +221,7 @@ void printInstr(INSTR *s) {
 }
 
 void printInstrList(INSTRLIST *s) {
-    while((s->next) != NULL) {
+    while((s) != NULL) {
       printInstr(s->instruction);
       s = s->next;
     }
@@ -230,19 +240,18 @@ int compileOp(int op) {
   }
 }
 
-INSTRLIST *compileExp(Expr* e, char *r) {
-    printf("CompileExp\n");
-    char* r1 = (char*) malloc(sizeof(char));
-    char* r2 = (char*) malloc(sizeof(char));
-    INSTRLIST* code1 = (INSTRLIST*) malloc(sizeof(INSTRLIST));
-    INSTRLIST* code2 = (INSTRLIST*) malloc(sizeof(INSTRLIST));
-    INSTRLIST* code3 = (INSTRLIST*) malloc(sizeof(INSTRLIST));
-    INSTRLIST* code4 = (INSTRLIST*) malloc(sizeof(INSTRLIST));
+
+INSTRLIST* compileExp(Expr* e, char *r) {
+    char* r1;
+    char* r2;
+    INSTRLIST* code1;
+    INSTRLIST* code2;
+    INSTRLIST* code3;
+    INSTRLIST* code4;
 
     switch(e->kind) {
         
         case E_OPERATION:
-          printf("CompileExp-Operation\n");
           r1 = strdup(newTemp());
           r2 = strdup(newTemp());
           code1 = compileExp(e->attr.op.left, r1);
@@ -254,14 +263,12 @@ INSTRLIST *compileExp(Expr* e, char *r) {
           break;
         
         case E_INTEGER:
-          printf("CompileExp-Int\n");
           r1 = strdup(r);
           code1 = newList(newInstr(ATRIBU, newVar(r1), newInt(e->attr.value), empty(), empty()), NULL); 
           return code1;
           break;
 
         case E_VARIABLE:
-          printf("CompileExp-Var\n");
           r1 =  strdup(r);
           code1 = newList(newInstr(ATRIBU, newVar(r1), newVar(e->attr.var), empty(), empty()), NULL);
           return code1;
@@ -276,25 +283,117 @@ char* newTemp() {
   sprintf(aux, "t%d", variavelControlo++);
   char* aux2 = strdup(aux);
   return aux2;
+} 
+char* newLabel() {
+  char aux[20];
+  sprintf(aux, "label%d", variavelControlo++);
+  char* aux2 = strdup(aux);
+  return aux2;
 }
 
-/*
-INSTRLIST compileBool(BoolExpr cond, char* labelTrue, char* labelFalse) {
+INSTRLIST* compileBool(BoolExpr* cond, char* labelTrue, char* labelFalse) {
   char* r1;
   char* r2;
+  INSTRLIST* code1;
+  INSTRLIST* code2;
+  INSTRLIST* code3;
+  INSTRLIST* code4;
+
   r1 = strdup(newTemp());
   r2 = strdup(newTemp());
-  INSTRLIST* code1 = compileExp(cond->attr.op.bleft, r1);
-  INSTRLIST* code2 = compileExp(cond->attr.op.bright, r2);
-  INSTRLIST* code3 = append(code1, code2);
-  INSTRLIST* code4 = append(code3, newList(newInstr(newVar(r1)), NULL));
+  code1 = compileExp(cond->attr.op.bleft, r1);
+  code2 = compileExp(cond->attr.op.bright, r2);
+  code3 = append(code1, code2);
+  switch(cond->attr.op.operator) { // EQUALTO, NEQUALTO, GT, LT, GET, LETH - IFG, IFL, IFGE, IFLE, IFEQ, IFNE
+      case EQUALTO:
+        code4 = append(code3, newList(newInstr(IFEQ, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
+        break;
+
+      case NEQUALTO:  
+        code4 = append(code3, newList(newInstr(IFNE, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
+        break;
+
+      case GT:
+        code4 = append(code3, newList(newInstr(IFG, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
+        break;
+
+      case LT:
+        code4 = append(code3, newList(newInstr(IFL, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
+        break;
+
+      case GET:
+        code4 = append(code3, newList(newInstr(IFGE, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
+        break;
+
+      case LETH:
+        code4 = append(code3, newList(newInstr(IFLE, newVar(r1), newVar(r2), newVar(labelTrue), newVar(labelFalse)),NULL)); 
+        break;
+
+      default:
+        break;
+  }
   return code4;
 }
 
-INSTRLIST compileCmd(Cmd c) {
+INSTRLIST* compileCmd(Cmd* comando) {
+  char* labelTrue; 
+  char* labelFalse;
+  char* labelEnd;
+  INSTRLIST* code1;
+  INSTRLIST* code2;
+  INSTRLIST* code3;
+  INSTRLIST* code4;
 
+  switch(comando->kind) { // CONDITIONAL, CONDITIONAL2, LOOP, PRINT, ATRIB, READ, PRINT2
+    case CONDITIONAL: // IF
+
+      break;
+
+    case CONDITIONAL2: // IF ELSE
+      labelTrue = newLabel();
+      labelFalse = newLabel();
+      labelEnd = newLabel();
+      code1 = compileBool(comando->attr.ite.condition, labelTrue, labelFalse);
+      code2 = compileCmdList(comando->attr.ite.list1); 
+      
+
+      break;
+
+    case LOOP: // WHILE
+
+      break;
+
+    case PRINT: // PRINT(string)
+
+      break;
+ 
+    case ATRIB: // ATRIB
+
+      break;
+
+    case READ: // READ
+
+      break;
+
+    case PRINT2: // PRINT(string, var);
+
+      break;
+
+    default:
+      break;
+  }
 }
 
+INSTRLIST* compileCmdList(commandList* l) {
+  if(l==NULL) return NULL;
+  else {
+    INSTRLIST* l1 = compileCmd(l->elem);
+    INSTRLIST* l2 = compileCmdList(l->next);
+    return (append(l1,l2));
+  }
+}
+
+/*
 void printMIPS(INSTRLIST *x) { // temos de printar as variaveis antes e dps O MIPS das operações, ou seja, criar uma
   while((x->next)!=NULL) {
     switch(x->instruction->op) { //descobrir como se acede aos registos r1,r2 e r3
@@ -373,5 +472,4 @@ void printMIPS(INSTRLIST *x) { // temos de printar as variaveis antes e dps O MI
   }
 }
 */
-
 

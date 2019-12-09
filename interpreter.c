@@ -55,14 +55,31 @@ int main(int argc, char** argv) {
 
   }*/
 
+  // Expressões
+  /*
   Expr* e1 = ast_integer(1);
-  Expr* e2 = ast_integer(1);
-  Expr* e3 = ast_integer(5);
-  Expr* e6 = ast_operation(MINUS, e3, e2);
-  //Expr* e4 = ast_operation(PLUS, e1, e6);
-  INSTRLIST* aux = compileExp(e6, "t0");
+  Expr* e2 = ast_integer(5);
+  Expr* e3 = ast_operation(MINUS, e2, e1);
+  Expr* e4 = ast_operation(PLUS, e1, e2);
+  Expr* e5 = ast_operation(TIMES, e4, e3);
+  INSTRLIST* aux = compileExp(e5, "x");
+  printInstrList(aux);
+  return 0;*/
 
-  return 0;
+  // Booleano expressões
+  /*
+  Expr* e1 = ast_integer(2);
+  Expr* e2 = ast_integer(3);
+  Expr* e3 = ast_operation(PLUS, e1, e2);
+  Expr* e4 = ast_integer(4);
+  Expr* e5 = ast_integer(5);
+  Expr* e6 = ast_operation(MINUS, e4, e5);
+  INSTRLIST* aux = compileBool(expression_operation(GT, e3, e6), "labelV", "labelF");
+  printInstrList(aux);
+  */
+
+  // Comandos
+  
 
 
 }
