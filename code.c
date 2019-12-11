@@ -376,8 +376,6 @@ INSTRLIST* compileBool(BoolExpr* cond, char* labelTrue, char* labelFalse) {
 }
 
 INSTRLIST* compileCmd(Cmd* comando) {
-  char* varAux;
-  char* valAux;
   char* labelTrue; 
   char* labelFalse;
   char* labelStart;
@@ -426,21 +424,10 @@ INSTRLIST* compileCmd(Cmd* comando) {
       code5 = append(code4, newList(newInstr(LABEL, newVar(labelEnd), empty(), empty(), empty()), NULL));
       return code5;
       break;
-
-    case PRINT: // PRINT(string)
-
-      break;
  
+    // EM FALTA
     case ATRIB: // ATRIB
       
-      break;
-
-    case READ: // READ
-
-      break;
-
-    case PRINT2: // PRINT(string, var);
-
       break;
 
     default:
@@ -457,41 +444,117 @@ INSTRLIST* compileCmdList(commandList* l) {
   }
 }
 
-/*
-void printMIPS(INSTRLIST *x) { // temos de printar as variaveis antes e dps O MIPS das operações, ou seja, criar uma
-  while((x)!=NULL) {
-    switch(x->instruction->op) { //descobrir como se acede aos registos r1,r2 e r3
+// PRINT MIPS DO RUI
+void printaMIPS(INSTRLIST *x) {
+  while(x!=NULL) {
+    switch(x->instruction->op) {
       case CPLUS:
-        printf("lw %s into r1\n", x->instruction->second.content.name);
-        printf("lw %s into r2\n", x->instruction->third.content.name); //x->instruction->third.content.val
-        printf("add r3, r1, r2"); //x->instruction->first.content.name, x->instruction->second.content.name , x->instruction->third.content.val
-        printf("sw r3 into %s\n", x->instruction->first.content.name);
+
         break;
 
       case CMINUS:
-        printf("lw %s into r1\n", x->instruction->second.content.name);
-        printf("lw %s into r2\n", x->instruction->third.content.name);
-        printf("sub r3, r1, r2");
-        printf("sw r3 into %s\n", x->instruction->first.content.name);
+
         break;
 
       case CTIMES:
-        printf("lw %s into r1\n", x->instruction->second.content.name);
-        printf("lw %s into r2\n", x->instruction->third.content.name);
-        printf("mul r3, r1, r2");
-        printf("sw r3 into %s\n", x->instruction->first.content.name);
+
         break;
 
       case CDIV:
-        printf("lw %s into r1\n", x->instruction->second.content.name);
-        printf("lw %s into r2\n", x->instruction->third.content.name);
+
+        break;
+
+      case GOTO:
+        printf("j %s\n", x->instruction->first->content.name);
+        break;
+
+      case IFG: 
+
+        break;
+
+      case IFL:
+
+        break;
+
+      case IFGE:
+
+        break;
+
+      case IFLE:
+
+        break;
+
+      case IFEQ:
+        printf("beq %s, %s, %s\n", x->instruction->first->content.name, x->instruction->second->content.name, x->instruction->third->content.name);
+        printf("%s: \n", x->instruction->fourth->content.name);
+        break;
+
+      case IFNE:
+        printf("bne %s, %s, %s\n", x->instruction->first->content.name, x->instruction->second->content.name, x->instruction->third->content.name);
+        printf("%s: \n", x->instruction->fourth->content.name);
+        break;
+
+      case LABEL:
+        printf("%s: \n", x->instruction->first->content.name);
+        break;
+
+      case ATRIBU:
+
+        break;
+
+      case IFBOOLCONST:
+
+        break;
+
+      case IFBOOLTRUEORFALSE:
+
+        break;
+
+      default:
+        break;
+    }
+    x = x->next;
+  }
+}
+
+
+
+/* PRINT MIPS DO RUBEN
+void printMIPS(INSTRLIST *x) { // temos de printar as variaveis antes e dps O MIPS das operações, ou seja, criar uma
+  while((x)!=NULL) {
+    switch(x->instruction->op) { //descobrir como se acede aos registos r1,r2 e r3
+      
+      case CPLUS:
+        printf("lw %s into r1\n", x->instruction->second->content.name);
+        printf("lw %s into r2\n", x->instruction->third->content.name); //x->instruction->third.content.val
+        printf("add r3, r1, r2"); //x->instruction->first.content.name, x->instruction->second.content.name , x->instruction->third.content.val
+        printf("sw r3 into %s\n", x->instruction->first->content.name);
+        break;
+
+      case CMINUS:
+        printf("lw %s into r1\n", x->instruction->second->content.name);
+        printf("lw %s into r2\n", x->instruction->third->content.name);
+        printf("sub r3, r1, r2");
+        printf("sw r3 into %s\n", x->instruction->first->content.name);
+        break;
+
+      case CTIMES:
+        printf("lw %s into r1\n", x->instruction->second->content.name);
+        printf("lw %s into r2\n", x->instruction->third->content.name);
+        printf("mul r3, r1, r2");
+        printf("sw r3 into %s\n", x->instruction->first->content.name);
+        break;
+
+      case CDIV:
+        printf("lw %s into r1\n", x->instruction->second->content.name);
+        printf("lw %s into r2\n", x->instruction->third->content.name);
         printf("div r3, r1, r2");
-        printf("sw r3 into %s\n", x->instruction->first.content.name);
+        printf("sw r3 into %s\n", x->instruction->first->content.name);
         break;
 
 
       case GOTO:
-        printf("GOTO %s:\n\n", x->instruction->first.content.name);
+        printf("GOTO %s:\n\n", x->instruction->first->content.name);
         break;
 
       case IFG:
@@ -513,20 +576,20 @@ void printMIPS(INSTRLIST *x) { // temos de printar as variaveis antes e dps O MI
         break;
 
       case LABEL:
-        printf("LABEL %s:\n", x->instruction->first.content.name);
+        printf("LABEL %s:\n", x->instruction->first->content.name);
         break;
 
       case ATRIBU:
 
-        if(x->instruction->second.kind==INT_CONST){
-        printf("lw %s into r1\n", x->instruction->second.content.name);
+        if(x->instruction->second->kind==INT_CONST){
+        printf("lw %s into r1\n", x->instruction->second->content.name);
         }
 
-        if(x->instruction->second.kind == STRINGS){
-          printf("lw %s into r1\n", x->instruction->second.content.val);
+        if(x->instruction->second->kind == STRINGS){
+          printf("lw %d into r1\n", x->instruction->second->content.val);
         }
 
-        printf("sw r1 into %s", x-> instruction->first.content.name);
+        printf("sw r1 into %s", x-> instruction->first->content.name);
         break;
 
       default:

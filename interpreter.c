@@ -39,7 +39,7 @@ int eval(Expr* expr) {
 }
 
 int main(int argc, char** argv) {
-  /*--argc; ++argv;
+  --argc; ++argv;
   
   if (argc != 0) {
     yyin = fopen(*argv, "r");
@@ -51,9 +51,12 @@ int main(int argc, char** argv) {
   
   if (yyparse() == 0) {
       // Primeiro trabalho
-      // printCmdList(root, 0);
+      printCmdList(root, 0);
+      
+      //INSTRLIST* auxiliar = compileCmdList(root);
+      //printInstrList(auxiliar);
 
-  }*/
+  }
 
   // Expressões
   /*
