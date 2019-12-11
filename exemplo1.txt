@@ -1,5 +1,9 @@
 fn main() {
 	if 2+2==5 {
-		let x = 1+1;
+		let y = 1+1;
+		let x = 2*2;
+	}
+	else {
+		let k = 1;
 	}
 }

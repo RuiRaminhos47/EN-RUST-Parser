@@ -431,7 +431,7 @@ INSTRLIST* compileCmd(Cmd* comando) {
       r1 = strdup(newTemp());
       r2 = strdup(newTemp());
       code1 = compileExp(comando->attr.l.expression, r1);
-      code2 = append(code1, newList(newInstr(ATRIB, newVar(comando->attr.l.var), newVar(r1), empty(), empty()), NULL));
+      code2 = append(code1, newList(newInstr(ATRIBU, newVar(r2), newVar(r1), empty(), empty()), NULL));
       return code2;
       break;
 
@@ -491,12 +491,12 @@ void printaMIPS(INSTRLIST *x) {
 
       case IFEQ:
         printf("beq %s, %s, %s\n", x->instruction->first->content.name, x->instruction->second->content.name, x->instruction->third->content.name);
-        printf("%s: \n", x->instruction->fourth->content.name);
+        printf("j %s \n", x->instruction->fourth->content.name);
         break;
 
       case IFNE:
         printf("bne %s, %s, %s\n", x->instruction->first->content.name, x->instruction->second->content.name, x->instruction->third->content.name);
-        printf("%s: \n", x->instruction->fourth->content.name);
+        printf("j %s \n", x->instruction->fourth->content.name);
         break;
 
       case LABEL:
@@ -504,7 +504,8 @@ void printaMIPS(INSTRLIST *x) {
         break;
 
       case ATRIBU:
-        printf("addi %s, 0, %s\n", x->instruction->first->content.name, x->instruction->second->content.name);
+        if(x->instruction->second->kind==INT_CONST) printf("addi %s, 0, %d\n", x->instruction->first->content.name, x->instruction->second->content.val);
+        if(x->instruction->second->kind==STRINGS) printf("addi %s, 0, %s\n", x->instruction->first->content.name, x->instruction->second->content.name);
         break;  
 
       case IFBOOLCONST:
