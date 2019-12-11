@@ -376,6 +376,8 @@ INSTRLIST* compileBool(BoolExpr* cond, char* labelTrue, char* labelFalse) {
 }
 
 INSTRLIST* compileCmd(Cmd* comando) {
+  char* r1;
+  char* r2;
   char* labelTrue; 
   char* labelFalse;
   char* labelStart;
@@ -425,9 +427,12 @@ INSTRLIST* compileCmd(Cmd* comando) {
       return code5;
       break;
  
-    // EM FALTA
     case ATRIB: // ATRIB
-      
+      r1 = strdup(newTemp());
+      r2 = strdup(newTemp());
+      code1 = compileExp(comando->attr.l.expression, r1);
+      code2 = append(code1, newList(newInstr(ATRIB, newVar(comando->attr.l.var), newVar(r1), empty(), empty()), NULL));
+      return code2;
       break;
 
     default:
@@ -449,19 +454,19 @@ void printaMIPS(INSTRLIST *x) {
   while(x!=NULL) {
     switch(x->instruction->op) {
       case CPLUS:
-
+        printf("add %s, %s, %s\n", x->instruction->first->content.name, x->instruction->second->content.name, x->instruction->third->content.name);
         break;
 
       case CMINUS:
-
+        printf("sub %s, %s, %s\n", x->instruction->first->content.name, x->instruction->second->content.name, x->instruction->third->content.name);
         break;
 
       case CTIMES:
-
+        printf("mul %s, %s, %s\n", x->instruction->first->content.name, x->instruction->second->content.name, x->instruction->third->content.name);
         break;
 
       case CDIV:
-
+        printf("div %s, %s, %s\n", x->instruction->first->content.name, x->instruction->second->content.name, x->instruction->third->content.name);
         break;
 
       case GOTO:
@@ -499,8 +504,8 @@ void printaMIPS(INSTRLIST *x) {
         break;
 
       case ATRIBU:
-
-        break;
+        printf("addi %s, 0, %s\n", x->instruction->first->content.name, x->instruction->second->content.name);
+        break;  
 
       case IFBOOLCONST:
 

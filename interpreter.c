@@ -51,10 +51,11 @@ int main(int argc, char** argv) {
   
   if (yyparse() == 0) {
       // Primeiro trabalho
-      printCmdList(root, 0);
+      //printCmdList(root, 0);
       
-      //INSTRLIST* auxiliar = compileCmdList(root);
+      INSTRLIST* auxiliar = compileCmdList(root);
       //printInstrList(auxiliar);
+      printaMIPS(auxiliar);
 
   }
 

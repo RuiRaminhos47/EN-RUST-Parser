@@ -51,5 +51,5 @@ INSTRLIST* compileBool(BoolExpr* cond, char* labelTrue, char* labelFalse);
 INSTRLIST* compileCmd(Cmd* c);
 INSTRLIST* compileCmdList(commandList* l);
 
-void printMIPS(INSTRLIST *x);
+void printaMIPS(INSTRLIST *x);
 #endif
