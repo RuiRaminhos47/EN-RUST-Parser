@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "parser.h"
 #include "printAbsTree.h"
-#include "hash.h"
 #include "code.h"
 
 int eval(Expr* expr) {
@@ -51,43 +50,20 @@ int main(int argc, char** argv) {
   
   if (yyparse() == 0) {
       // Primeiro trabalho
-      //printCmdList(root, 0);
+      // printCmdList(root, 0);
       
       INSTRLIST* auxiliar = compileCmdList(root);
-      //printInstrList(auxiliar);
+      printf("Código - 3 Registos\n");
+      printInstrList(auxiliar);
+      printf("\n");
+
+      printf("Código - MIPS\n");
+      MAPEIADATA* hashM = compileMap(root);
+      printf(".data \n");
+      printaMAPA(hashM);
+
+      printf("\n.text \n");
       printaMIPS(auxiliar);
 
   }
-
-  // Expressões
-  /*
-  Expr* e1 = ast_integer(1);
-  Expr* e2 = ast_integer(5);
-  Expr* e3 = ast_operation(MINUS, e2, e1);
-  Expr* e4 = ast_operation(PLUS, e1, e2);
-  Expr* e5 = ast_operation(TIMES, e4, e3);
-  INSTRLIST* aux = compileExp(e5, "x");
-  printInstrList(aux);
-  return 0;*/
-
-  // Booleano expressões
-  /*
-  BoolExpr* e1 = expression_string(TRUE);
-  INSTRLIST* aux = compileBool(e1, "labelV", "labelF");
-  printInstrList(aux);
-  */
-  /*
-  Expr* e1 = ast_integer(2);
-  Expr* e2 = ast_integer(3);
-  Expr* e3 = ast_operation(PLUS, e1, e2);
-  Expr* e4 = ast_integer(4);
-  Expr* e5 = ast_integer(5);
-  Expr* e6 = ast_operation(MINUS, e4, e5);
-  INSTRLIST* aux = compileBool(expression_operation(GT, e3, e6), "labelV", "labelF");
-  printInstrList(aux);
-  */
-  
-  // Comandos
-
-
 }

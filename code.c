@@ -4,10 +4,18 @@
 #include "code.h"
 #include <ctype.h>
 #include "parser.h"
-#include "hash.h"
 
 int variavelControlo = 0;
 int variavelControlo2 = 0;
+char* jaExistem[30];
+int variavelControloJaExistem=0;
+
+MAPEIADATA* newData(char* inicio, MAPEIADATA* cauda) {
+  MAPEIADATA* hashM = (MAPEIADATA*) malloc(sizeof(*hashM));
+  hashM->var = inicio;
+  hashM->next = cauda;
+  return hashM;
+}
 
 ELEM* newVar(char *s) {
   ELEM* y = (ELEM*) malloc(sizeof(ELEM));
@@ -33,17 +41,6 @@ void printElem(ELEM* x) {
   if(x->kind==EMPTY) return;
   if(x->kind==INT_CONST) printf("%d", x->content.val);
   if(x->kind==STRINGS) printf("%s", x->content.name);
-}
-
-int getValue(ELEM* x) { 
-  if(x->kind==STRINGS) {
-    if(lookup(x->content.name)!=NULL) return lookup(x->content.name)->valor;
-    else return -1000;
-  }
-  if(x->kind==INT_CONST) {
-    return x->content.val;
-  }
-  else return -1000;
 }
 
 INSTR *newInstr(OpKind oper, ELEM* x, ELEM* y, ELEM* z, ELEM* w) {
@@ -81,6 +78,14 @@ INSTRLIST *append(INSTRLIST *s, INSTRLIST *l) {
     for(p=s; p->next !=NULL; p=p->next) {}
     p->next = l;
     return s;
+}
+
+MAPEIADATA* appendHash(MAPEIADATA* one, MAPEIADATA* two) {
+    MAPEIADATA* p;
+    if(one==NULL) return two;
+    for(p=one; p->next != NULL; p = p->next) {}
+    p->next = two;
+    return one;
 }
 
 INSTR *getFirst(INSTRLIST *s) {
@@ -235,6 +240,26 @@ void printInstr(INSTR *s) {
         printf("\n");
         break;
 
+      case PRINTS:
+        printf("PRINT "); 
+        printElem(s->first);
+        printf("\n");
+        break;
+
+      case PRINTS2:
+        printf("PRINT "); 
+        printElem(s->first);
+        printf(" ");
+        printElem(s->second);
+        printf("\n");
+        break;
+
+      case READS:
+        printf("READ "); 
+        printElem(s->first);
+        printf("\n");
+        break;
+
       default:
         break;
     }
@@ -244,6 +269,13 @@ void printInstrList(INSTRLIST *s) {
     while((s) != NULL) {
       printInstr(s->instruction);
       s = s->next;
+    }
+}
+
+void printaMAPA(MAPEIADATA* mapa) {
+    while(mapa!=NULL) {
+      printf("int: .%s\n", mapa->var);
+      mapa = mapa->next;
     }
 }
 
@@ -260,7 +292,6 @@ int compileOp(int op) {
   }
 }
 
-
 INSTRLIST* compileExp(Expr* e, char *r) {
     char* r1;
     char* r2;
@@ -275,22 +306,19 @@ INSTRLIST* compileExp(Expr* e, char *r) {
           r1 = strdup(newTemp());
           r2 = strdup(newTemp());
           code1 = compileExp(e->attr.op.left, r1);
-          code2 = compileExp(e->attr.op.right, r2);
+          code2 = append(code1, compileExp(e->attr.op.right, r2));
           int op = compileOp(e->attr.op.operator);
-          code3 = append(code1, code2);
-          code4 = append(code3, newList(newInstr(op, newVar(r), newVar(r1), newVar(r2), empty()), NULL));
-          return code4;
+          code3 = append(code2, newList(newInstr(op, newVar(r), newVar(r1), newVar(r2), empty()), NULL));
+          return code3;
           break;
         
         case E_INTEGER:
-          r1 = strdup(r);
-          code1 = newList(newInstr(ATRIBU, newVar(r1), newInt(e->attr.value), empty(), empty()), NULL); 
+          code1 = newList(newInstr(ATRIBU, newVar(r), newInt(e->attr.value), empty(), empty()), NULL); 
           return code1;
           break;
 
         case E_VARIABLE:
-          r1 =  strdup(r);
-          code1 = newList(newInstr(ATRIBU, newVar(r1), newVar(e->attr.var), empty(), empty()), NULL);
+          code1 = newList(newInstr(ATRIBU, newVar(r), newVar(e->attr.var), empty(), empty()), NULL);
           return code1;
         
         default:
@@ -299,6 +327,7 @@ INSTRLIST* compileExp(Expr* e, char *r) {
 }
 
 char* newTemp() {
+  if(variavelControlo==8) variavelControlo=0;
   char aux[20];
   sprintf(aux, "t%d", variavelControlo++);
   char* aux2 = strdup(aux);
@@ -306,7 +335,7 @@ char* newTemp() {
 } 
 char* newLabel() {
   char aux[20];
-  sprintf(aux, "label%d", variavelControlo++);
+  sprintf(aux, "label%d", variavelControlo2++);
   char* aux2 = strdup(aux);
   return aux2;
 }
@@ -329,7 +358,8 @@ INSTRLIST* compileBool(BoolExpr* cond, char* labelTrue, char* labelFalse) {
 
     case(EB_CONSTANTS):
       r1 = strdup(newTemp());
-      code1 = newList(newInstr(IFBOOLTRUEORFALSE, newVar(r1), newVar(labelTrue), newVar(labelFalse), empty()), NULL);
+      if(cond->attr.operator==TRUE) code1 = newList(newInstr(IFBOOLTRUEORFALSE, newVar("true"), newVar(labelTrue), newVar(labelFalse), empty()), NULL);
+      if(cond->attr.operator==FALSE) code1 = newList(newInstr(IFBOOLTRUEORFALSE, newVar("false"), newVar(labelTrue), newVar(labelFalse), empty()), NULL);
       return code1;
       break;
 
@@ -373,6 +403,32 @@ INSTRLIST* compileBool(BoolExpr* cond, char* labelTrue, char* labelFalse) {
     default:
       break;
   }
+}
+
+MAPEIADATA* compileMapAtrib(Cmd* c) {
+  if(c->kind!=ATRIB || existeNoMap(c->attr.l.var)==1) return NULL;
+  MAPEIADATA* code1;
+  code1 = newData(c->attr.l.var, NULL);
+  jaExistem[variavelControloJaExistem++] = c->attr.l.var;
+  return code1;
+}
+
+MAPEIADATA* compileMap(commandList* l) {
+  if(l==NULL) return NULL;
+  else {
+    MAPEIADATA* l1 = compileMapAtrib(l->elem);
+    if(l1==NULL) return compileMap(l->next);
+    return (appendHash(l1,compileMap(l->next)));
+  }
+}
+
+int existeNoMap(char* var) {
+  int aux=0;
+  while(aux<variavelControloJaExistem) {
+    if(strcmp(jaExistem[aux], var)==0) return 1;
+    aux++;
+  }
+  return 0;
 }
 
 INSTRLIST* compileCmd(Cmd* comando) {
@@ -429,10 +485,25 @@ INSTRLIST* compileCmd(Cmd* comando) {
  
     case ATRIB: // ATRIB
       r1 = strdup(newTemp());
-      r2 = strdup(newTemp());
       code1 = compileExp(comando->attr.l.expression, r1);
-      code2 = append(code1, newList(newInstr(ATRIBU, newVar(r2), newVar(r1), empty(), empty()), NULL));
-      return code2;
+      return code1;
+      break;
+
+    case PRINT:
+      code1= newList(newInstr(PRINTS, newVar(comando->attr.p.string), empty(), empty(), empty()), NULL);
+      return code1;
+      break;
+
+    case READ:
+      r1 = strdup(newTemp());
+      code1 = newList(newInstr(READS, newVar(r1), empty(), empty(), empty()), NULL);
+      return code1;
+      break;
+
+    case PRINT2:
+      r1 = strdup(newTemp());
+      code1 = newList(newInstr(PRINTS2, newVar(comando->attr.p2.string), newVar(r1), empty(), empty()), NULL);
+      return code1;
       break;
 
     default:
@@ -449,7 +520,6 @@ INSTRLIST* compileCmdList(commandList* l) {
   }
 }
 
-// PRINT MIPS DO RUI
 void printaMIPS(INSTRLIST *x) {
   while(x!=NULL) {
     switch(x->instruction->op) {
@@ -504,8 +574,8 @@ void printaMIPS(INSTRLIST *x) {
         break;
 
       case ATRIBU:
-        if(x->instruction->second->kind==INT_CONST) printf("addi %s, 0, %d\n", x->instruction->first->content.name, x->instruction->second->content.val);
-        if(x->instruction->second->kind==STRINGS) printf("addi %s, 0, %s\n", x->instruction->first->content.name, x->instruction->second->content.name);
+        if(x->instruction->second->kind==INT_CONST) printf("li %s, %d\n", x->instruction->first->content.name, x->instruction->second->content.val);
+        if(x->instruction->second->kind==STRINGS) printf("li %s, %s\n", x->instruction->first->content.name, x->instruction->second->content.name);
         break;  
 
       case IFBOOLCONST:
@@ -516,86 +586,20 @@ void printaMIPS(INSTRLIST *x) {
 
         break;
 
-      default:
-        break;
-    }
-    x = x->next;
-  }
-}
-
-
-
-/* PRINT MIPS DO RUBEN
-void printMIPS(INSTRLIST *x) { // temos de printar as variaveis antes e dps O MIPS das operações, ou seja, criar uma
-  while((x)!=NULL) {
-    switch(x->instruction->op) { //descobrir como se acede aos registos r1,r2 e r3
-      
-      case CPLUS:
-        printf("lw %s into r1\n", x->instruction->second->content.name);
-        printf("lw %s into r2\n", x->instruction->third->content.name); //x->instruction->third.content.val
-        printf("add r3, r1, r2"); //x->instruction->first.content.name, x->instruction->second.content.name , x->instruction->third.content.val
-        printf("sw r3 into %s\n", x->instruction->first->content.name);
+      case PRINTS:
+        printf("li $v0, 4\n");
+        printf("la $a0, %s\n", x->instruction->first->content.name);
+        printf("syscall\n");
         break;
 
-      case CMINUS:
-        printf("lw %s into r1\n", x->instruction->second->content.name);
-        printf("lw %s into r2\n", x->instruction->third->content.name);
-        printf("sub r3, r1, r2");
-        printf("sw r3 into %s\n", x->instruction->first->content.name);
+      case PRINTS2:
+        printf("li $v0, 1\n");
+        printf("move $a0, %s\n", x->instruction->second->content.name);
+        printf("syscall\n");
         break;
 
-      case CTIMES:
-        printf("lw %s into r1\n", x->instruction->second->content.name);
-        printf("lw %s into r2\n", x->instruction->third->content.name);
-        printf("mul r3, r1, r2");
-        printf("sw r3 into %s\n", x->instruction->first->content.name);
-        break;
+      case READS:
 
-      case CDIV:
-        printf("lw %s into r1\n", x->instruction->second->content.name);
-        printf("lw %s into r2\n", x->instruction->third->content.name);
-        printf("div r3, r1, r2");
-        printf("sw r3 into %s\n", x->instruction->first->content.name);
-        break;
-
-
-      case GOTO:
-        printf("GOTO %s:\n\n", x->instruction->first->content.name);
-        break;
-
-      case IFG:
-        break;
-
-      case IFL:
-        break;
-
-      case IFGE:
-        break;
-
-      case IFLE:
-        break;
-
-      case IFEQ:
-        break;
-
-      case IFNE:
-        break;
-
-      case LABEL:
-        printf("LABEL %s:\n", x->instruction->first->content.name);
-        break;
-
-      case ATRIBU:
-
-        if(x->instruction->second->kind==INT_CONST){
-        printf("lw %s into r1\n", x->instruction->second->content.name);
-        }
-
-        if(x->instruction->second->kind == STRINGS){
-          printf("lw %d into r1\n", x->instruction->second->content.val);
-        }
-
-        printf("sw r1 into %s", x-> instruction->first->content.name);
         break;
 
       default:
@@ -604,5 +608,5 @@ void printMIPS(INSTRLIST *x) { // temos de printar as variaveis antes e dps O MI
     x = x->next;
   }
 }
-*/
+
 

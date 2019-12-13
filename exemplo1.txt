@@ -1,9 +1,6 @@
 fn main() {
-	if 2+2==5 {
-		let y = 1+1;
-		let x = 2*2;
+	if x!=2*2 {
+		println!("StringTeste");
 	}
-	else {
-		let k = 1;
-	}
+
 }

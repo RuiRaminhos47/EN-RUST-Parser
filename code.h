@@ -3,7 +3,7 @@
 #define __code_h__
 #include "ast.h"
 
-typedef enum { CPLUS, CMINUS, CTIMES, CDIV, GOTO, IFBOOLCONST, IFBOOLTRUEORFALSE, IFG, IFL, IFGE, IFLE, IFEQ, IFNE, LABEL, ATRIBU } OpKind;
+typedef enum { CPLUS, CMINUS, CTIMES, CDIV, GOTO, IFBOOLCONST, IFBOOLTRUEORFALSE, IFG, IFL, IFGE, IFLE, IFEQ, IFNE, LABEL, ATRIBU, PRINTS, PRINTS2, READS } OpKind;
 
 typedef enum { EMPTY, INT_CONST, STRINGS } ElemKind;
 
@@ -52,4 +52,17 @@ INSTRLIST* compileCmd(Cmd* c);
 INSTRLIST* compileCmdList(commandList* l);
 
 void printaMIPS(INSTRLIST *x);
+
+typedef struct mapeiadata {
+  char* var;
+  struct mapeiadata *next;
+} MAPEIADATA;
+
+MAPEIADATA* newData(char* inicio, MAPEIADATA* cauda);
+MAPEIADATA* appendHash(MAPEIADATA* one, MAPEIADATA* two);
+void printaMAPA(MAPEIADATA* mapa);
+MAPEIADATA* compileMap(commandList* l);
+MAPEIADATA* compileMapAtrib(Cmd* c);
+int existeNoMap(char* var);
+
 #endif
