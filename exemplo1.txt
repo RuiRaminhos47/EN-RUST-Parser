@@ -1,6 +1,4 @@
 fn main() {
-	if x!=2*2 {
-		println!("StringTeste");
-	}
-
+	if 1>=2 {}
+	if 3<=1 {}
 }

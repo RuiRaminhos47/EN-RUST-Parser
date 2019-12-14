@@ -521,6 +521,8 @@ INSTRLIST* compileCmdList(commandList* l) {
 }
 
 void printaMIPS(INSTRLIST *x) {
+  char* r1;
+
   while(x!=NULL) {
     switch(x->instruction->op) {
       case CPLUS:
@@ -543,20 +545,33 @@ void printaMIPS(INSTRLIST *x) {
         printf("j %s\n", x->instruction->first->content.name);
         break;
 
-      case IFG: 
-
+      case IFG:
+        r1 = strdup(newTemp());
+        printf("slt %s, %s, %s\n", r1, x->instruction->first->content.name, x->instruction->second->content.name);
+        printf("beq %s, 0, %s\n", r1, x->instruction->third->content.name);
+        printf("j %s\n", x->instruction->fourth->content.name);
         break;
 
       case IFL:
-
+        r1 = strdup(newTemp());
+        printf("slt %s, %s, %s\n", r1, x->instruction->first->content.name, x->instruction->second->content.name);
+        printf("beq %s, 1, %s\n", r1, x->instruction->third->content.name);
+        printf("j %s\n", x->instruction->fourth->content.name);
         break;
 
       case IFGE:
-
+        r1 = strdup(newTemp());
+        printf("slt %s, %s, %s\n", r1, x->instruction->first->content.name, x->instruction->second->content.name);
+        printf("beq %s, 0, %s\n", r1, x->instruction->third->content.name);
+        printf("j %s \n", x->instruction->fourth->content.name);
         break;
 
       case IFLE:
-
+        r1 = strdup(newTemp());
+        printf("slt %s, %s, %s\n", r1, x->instruction->first->content.name, x->instruction->second->content.name);
+        printf("beq %s, 1, %s\n", r1, x->instruction->third->content.name);
+        printf("beq %s, %s, %s\n", x->instruction->first->content.name, x->instruction->second->content.name, x->instruction->third->content.name);
+        printf("j %s \n", x->instruction->fourth->content.name);
         break;
 
       case IFEQ:
@@ -579,11 +594,13 @@ void printaMIPS(INSTRLIST *x) {
         break;  
 
       case IFBOOLCONST:
-
+        printf("beq %s, 1, %s\n", x->instruction->first->content.name, x->instruction->second->content.name);
+        printf("j %s\n", x->instruction->third->content.name);
         break;
 
       case IFBOOLTRUEORFALSE:
-
+        printf("beq %s, true, %s\n", x->instruction->first->content.name, x->instruction->second->content.name);
+        printf("j %s\n", x->instruction->third->content.name);
         break;
 
       case PRINTS:
@@ -599,7 +616,9 @@ void printaMIPS(INSTRLIST *x) {
         break;
 
       case READS:
-
+        printf("li $v0, 5\n");
+        printf("syscall\n");
+        printf("la %s, $a0\n", x->instruction->first->content.name);
         break;
 
       default:
