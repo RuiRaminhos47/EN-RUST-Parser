@@ -53,17 +53,7 @@ int main(int argc, char** argv) {
       // printCmdList(root, 0);
       
       INSTRLIST* auxiliar = compileCmdList(root);
-      printf("Código - 3 Registos\n");
       printInstrList(auxiliar);
-      printf("\n");
-
-      printf("Código - MIPS\n");
-      MAPEIADATA* hashM = compileMap(root);
-      printf(".data \n");
-      printaMAPA(hashM);
-
-      printf("\n.text \n");
-      printaMIPS(auxiliar);
 
       FILE *fp;
 
@@ -72,6 +62,7 @@ int main(int argc, char** argv) {
         exit(1);
       }
 
+      MAPEIADATA* hashM = compileMap(root);
       printf(".data \n");
       printaMAPA(hashM);
       printf("\n.text \n");

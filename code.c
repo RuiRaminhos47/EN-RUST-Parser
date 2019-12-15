@@ -485,7 +485,7 @@ INSTRLIST* compileCmd(Cmd* comando) {
  
     case ATRIB: // ATRIB
       r1 = strdup(newTemp());
-      code1 = compileExp(comando->attr.l.expression, r1);
+      code1 = compileExp(comando->attr.l.expression, comando->attr.l.var);
       return code1;
       break;
 
@@ -495,14 +495,13 @@ INSTRLIST* compileCmd(Cmd* comando) {
       break;
 
     case READ:
-      r1 = strdup(newTemp());
-      code1 = newList(newInstr(READS, newVar(r1), empty(), empty(), empty()), NULL);
+      code1 = newList(newInstr(READS, newVar(comando->attr.r.var), empty(), empty(), empty()), NULL);
       return code1;
       break;
 
     case PRINT2:
       r1 = strdup(newTemp());
-      code1 = newList(newInstr(PRINTS2, newVar(comando->attr.p2.string), newVar(r1), empty(), empty()), NULL);
+      code1 = newList(newInstr(PRINTS2, newVar(comando->attr.p2.var), empty(), empty(), empty()), NULL);
       return code1;
       break;
 
@@ -547,8 +546,8 @@ void printaMIPS(INSTRLIST *x) {
 
       case IFG:
         r1 = strdup(newTemp());
-        printf("slt %s, %s, %s\n", r1, x->instruction->first->content.name, x->instruction->second->content.name);
-        printf("beq %s, 0, %s\n", r1, x->instruction->third->content.name);
+        printf("sgt %s, %s, %s\n", r1, x->instruction->first->content.name, x->instruction->second->content.name);
+        printf("beq %s, 1, %s\n", r1, x->instruction->third->content.name);
         printf("j %s\n", x->instruction->fourth->content.name);
         break;
 
@@ -611,14 +610,14 @@ void printaMIPS(INSTRLIST *x) {
 
       case PRINTS2:
         printf("li $v0, 1\n");
-        printf("move $a0, %s\n", x->instruction->second->content.name);
+        printf("move $a0, %s\n", x->instruction->first->content.name);
         printf("syscall\n");
         break;
 
       case READS:
         printf("li $v0, 5\n");
         printf("syscall\n");
-        printf("la %s, $a0\n", x->instruction->first->content.name);
+        printf("la %s, $v0\n", x->instruction->first->content.name);
         break;
 
       default:
