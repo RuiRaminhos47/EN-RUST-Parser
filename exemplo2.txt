@@ -1,0 +1,8 @@
+fn main() {
+	if 2*2==4 {
+		read_line(&var);
+	}
+	else {
+		println!("Teste", variavel);
+	}
+}

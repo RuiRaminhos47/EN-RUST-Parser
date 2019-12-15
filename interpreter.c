@@ -65,5 +65,19 @@ int main(int argc, char** argv) {
       printf("\n.text \n");
       printaMIPS(auxiliar);
 
+      FILE *fp;
+
+      if((fp=freopen("MIPS.txt", "w" ,stdout))==NULL) {
+        printf("Cannot open file.\n");
+        exit(1);
+      }
+
+      printf(".data \n");
+      printaMAPA(hashM);
+      printf("\n.text \n");
+      printaMIPS(auxiliar);
+
+      fclose(fp);
+
   }
 }
