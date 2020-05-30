@@ -2,7 +2,7 @@
 Implementação de um analisador sintáctico de um subconjunto da linguagem Rust.
 
 
-O subconjunto da linguagem deverá incluir:
+O subconjunto da linguagem inclui:
 
 - uma única função: fn main() {...}
 
@@ -22,4 +22,4 @@ O subconjunto da linguagem deverá incluir:
 
 - Funções de input/output (println e read_line)
 
-O parser deverá fazer a análise sintáctica do programa do subconjunto de Rust pedido, e fornecer como output  uma representação da árvore abstracta (union em C / data em Haskell). Deverá para isso, além do parser, implementar uma função para imprimir a árvore sintática abstracta do programa Rust.
+O parser faz a análise sintáctica do programa do subconjunto de Rust pedido, e fornece como output uma representação da árvore abstracta (union em C). 
