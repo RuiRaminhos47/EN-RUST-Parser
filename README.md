@@ -1,4 +1,4 @@
-# Analisador-Sint-ctico-RUST
+# RUST-Parser
 Implementation of a parser for a subset of the Rust language.
 
 The subset of the language includes:
