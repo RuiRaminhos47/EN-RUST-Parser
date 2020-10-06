@@ -1,25 +1,24 @@
 # Analisador-Sint-ctico-RUST
-Implementação de um analisador sintáctico de um subconjunto da linguagem Rust.
+Implementation of a parser for a subset of the Rust language.
 
+The subset of the language includes:
 
-O subconjunto da linguagem inclui:
+- a single function: fn main () {...}
 
-- uma única função: fn main() {...}
+- Integers and Booleans
 
-- Inteiros e booleanos
+- Arithmetic expressions
 
-- Expressões aritméticas
+- Boolean expressions
 
-- Expressões booleanas
+- Assignments (let)
 
-- Atribuições (let)
+- If and If then else
 
-- If e If then else
+- While Cycles
 
-- Ciclos While
+- Command strings (separated by ;)
 
-- Sequências de comandos (separados por ; )
+- Input / output functions (println and read_line)
 
-- Funções de input/output (println e read_line)
-
-O parser faz a análise sintáctica do programa do subconjunto de Rust pedido, e fornece como output uma representação da árvore abstracta (union em C). 
+The parser parses the program for the requested Rust subset, and outputs a representation of the abstract tree (union in C).
