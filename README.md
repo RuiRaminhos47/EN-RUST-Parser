@@ -1,4 +1,7 @@
 # RUST-Parser
+
+Undergraduate Curricular Unit Project - 3rd Year - Compilers.
+
 Implementation of a parser for a subset of the Rust language.
 
 The subset of the language includes:
